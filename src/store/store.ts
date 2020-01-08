@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import app from './modules/App';
+import user from './modules/User';
 
 const persistConfig: PersistConfig<any> = {
   key: 'root',
@@ -13,6 +14,7 @@ const persistConfig: PersistConfig<any> = {
 
 const rootReducers = combineReducers({
   app: app.Reducer,
+  user: user.Reducer,
 });
 
 const rootPersistReducer = persistReducer(persistConfig, rootReducers);
