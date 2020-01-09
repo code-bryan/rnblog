@@ -1,6 +1,5 @@
-import styled from 'styled-components';
 import React, { useCallback, useEffect, useReducer } from 'react';
-import { Platform } from 'react-native';
+import { Input, Item, View } from 'native-base';
 import TextAlert from '../Text/Alert';
 
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
@@ -9,6 +8,7 @@ const VALUE_CHANGE = 'VALUE_CHANGE';
 type Props = {
   id: string,
   label: string;
+  onChange: Function;
   defaultValue?: string | null;
   valid?: boolean;
   required?: boolean;
@@ -16,10 +16,9 @@ type Props = {
   min?: number;
   max?: number;
   minLength?: number;
-  type: string;
   keyboardType?: string;
-  autoCapitalize?: string;
-  onChange: Function
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  secureTextEntry?: boolean;
 };
 
 interface InputReducerValues {
@@ -46,31 +45,9 @@ const InputReducer = (state: InputReducerValues, action: any) => {
   }
 };
 
-const FieldLabel = styled.Text`
-   font-size: 20px;
-   font-weight: 200;
-`;
-
-const FieldContainer = styled.View`
-  margin: ${Platform.OS === 'ios' ? '0 15px' : '10px 15px'};
-  padding: ${Platform.OS === 'ios' ? '15px 5px' : '0'};
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const FieldTextInput = styled.TextInput`
-  width: 100%;
-  font-size: 20px;
-  border-bottom-width: ${Platform.OS === 'ios' ? '0.5px' : '0.8px'};
-  border-bottom-color: black;
-  margin-top: ${Platform.OS === 'ios' ? '10px' : '0'};
-`;
-
 const Field: React.FC<Props> = (props: Props) => {
   const {
-    id, label, type, keyboardType, onChange, defaultValue, valid, autoCapitalize,
+    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -125,21 +102,24 @@ const Field: React.FC<Props> = (props: Props) => {
   }, [id, dispatch]);
 
   return (
-    <FieldContainer>
-      <FieldLabel>{label}</FieldLabel>
-      <FieldTextInput
-        autoCapitalize={autoCapitalize}
-        secureTextEntry={type === 'password'}
-        textContentType={type}
-        keyboardType={keyboardType}
-        value={state.value}
-        onBlur={onTouchedInput}
-        onChangeText={onInputTextChange}
-      />
-      {!state.isValid && state.touched && (
-        <TextAlert>This input is not valid</TextAlert>
-      )}
-    </FieldContainer>
+    <View style={{ marginBottom: 20 }}>
+      <Item rounded style={{ paddingLeft: 15 }}>
+        <Input
+          placeholder={label}
+          autoCapitalize={autoCapitalize}
+          secureTextEntry={secureTextEntry}
+          value={state.value}
+          onBlur={onTouchedInput}
+          onChangeText={onInputTextChange}
+        />
+
+      </Item>
+      <View style={{ marginLeft: 15 }}>
+        {!state.isValid && state.touched && (
+          <TextAlert>This input is not valid</TextAlert>
+        )}
+      </View>
+    </View>
   );
 };
 

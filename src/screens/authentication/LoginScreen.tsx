@@ -1,16 +1,17 @@
 import React, { useCallback, useReducer } from 'react';
+import { useDispatch } from 'react-redux';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Button, Dimensions, KeyboardAvoidingView, ScrollView, View,
+  Dimensions, KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
-import FormField from '../../components/UI/Form/Field';
-import Container from '../../components/UI/Container';
-import Colors from '../../constants/Colors';
+import {
+  Button, Container, Content, Form, Text, View,
+} from 'native-base';
+
+import Field from '../../components/UI/Form/Field';
 import Credentials from '../../models/Credentials';
 import Title from '../../components/UI/Text/Title';
 import { authenticateUser } from '../../store/modules/Authentication';
-import Link from '../../components/UI/Text/Link';
 
 type Params = {};
 type ScreenProps = {};
@@ -44,65 +45,69 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   const [formState, dispatchForm] = useReducer(LoginScreenReducer, loginScreenReducerValues);
   const dispatch = useDispatch();
 
-  const onInputChange = useCallback((id: string, value: string, isValid: boolean) => {
+  const onInputChangeHandler = useCallback((id: string, value: string, isValid: boolean) => {
     dispatchForm({
       type: UPDATE_AUTHENTICATION_VALUE, id, value, isValid,
     });
   }, [dispatchForm]);
 
+  const onSubmitHandler = useCallback(() => {
+    dispatch(authenticateUser(formState.credentials));
+    props.navigation.navigate('AuthLoading');
+  }, [dispatch, formState]);
+
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <KeyboardAvoidingView style={{ flex: 1 }}>
-        <Container style={{ marginTop: Dimensions.get('window').height / 5 }}>
-          <Title style={{ marginHorizontal: 20, marginBottom: 50 }}>Login</Title>
+    <Container style={{ flex: 1 }}>
+      <ScrollView>
+        <KeyboardAvoidingView style={{ flex: 1 }}>
+          <Content style={{ paddingTop: Dimensions.get('window').height / 5 }}>
+            <Form>
+              <Title style={{ marginHorizontal: 35, marginBottom: Platform.OS === 'android' ? 50 : 50 }}>Login</Title>
+              <View style={{ marginHorizontal: 30 }}>
+                <Field
+                  id="email"
+                  label="Email"
+                  required
+                  email
+                  valid={!!formState.credentials.email}
+                  defaultValue={formState.credentials.email}
+                  autoCapitalize="none"
+                  onChange={onInputChangeHandler}
+                />
 
-          <FormField
-            id="email"
-            type="emailAddress"
-            label="Email"
-            required
-            email
-            valid={!!formState.credentials.email}
-            defaultValue={formState.credentials.email}
-            autoCapitalize="none"
-            onChange={onInputChange}
-          />
+                <Field
+                  id="password"
+                  label="Password"
+                  valid={!!formState.credentials.password}
+                  defaultValue={formState.credentials.password}
+                  required
+                  minLength={6}
+                  autoCapitalize="none"
+                  secureTextEntry
+                  onChange={onInputChangeHandler}
+                />
+              </View>
 
-          <FormField
-            id="password"
-            type="password"
-            label="Password"
-            valid={!!formState.credentials.password}
-            defaultValue={formState.credentials.password}
-            required
-            minLength={6}
-            onChange={onInputChange}
-          />
+              <View style={{ marginVertical: 20, marginHorizontal: '25%' }}>
+                <Button rounded onPress={onSubmitHandler}>
+                  <Text style={{ width: '100%', textAlign: 'center' }}>Log In</Text>
+                </Button>
 
-          <View style={{ marginVertical: 20, marginHorizontal: '25%' }}>
-            <Button
-              title="Log In"
-              onPress={() => {
-                dispatch(authenticateUser(formState.credentials));
-                props.navigation.navigate('AuthLoading');
-              }}
-              color={Colors.primary}
-            />
+                <Button transparent onPress={() => props.navigation.navigate('Register')} style={{ marginTop: 20 }}>
+                  <Text style={{ width: '100%', textAlign: 'center' }}>Sign Up</Text>
+                </Button>
+              </View>
+            </Form>
 
-            <Link onPress={() => props.navigation.navigate('Register')} style={{ marginTop: 20 }}>
-              Sign Up
-            </Link>
-          </View>
-
-
-        </Container>
-      </KeyboardAvoidingView>
-    </ScrollView>
+          </Content>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </Container>
   );
 };
 
-LoginScreen.navigationOptions = (navData) => ({
+LoginScreen.navigationOptions = {
   headerShown: false,
-});
+};
 
 export default LoginScreen;
