@@ -3,14 +3,14 @@ import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
   Button, Dimensions, KeyboardAvoidingView, ScrollView, View,
 } from 'react-native';
-import FormField from '../../components/UI/FormField';
-import Content from '../../components/UI/Content';
+import { useDispatch } from 'react-redux';
+import FormField from '../../components/UI/Form/Field';
+import Container from '../../components/UI/Container';
 import Colors from '../../constants/Colors';
 import Credentials from '../../models/Credentials';
-import Title from '../../components/UI/Title';
-import { authenticateUser } from "../../store/modules/Authentication";
-import AuthenticationService from "../../services/AuthenticationService";
-import { useDispatch } from "react-redux";
+import Title from '../../components/UI/Text/Title';
+import { authenticateUser } from '../../store/modules/Authentication';
+import Link from '../../components/UI/Text/Link';
 
 type Params = {};
 type ScreenProps = {};
@@ -23,18 +23,17 @@ interface LoginScreenReducerValues {
 }
 
 const LoginScreenReducer = (state: LoginScreenReducerValues, action: any) => {
-  switch (action.type) {
-    case UPDATE_AUTHENTICATION_VALUE:
-      return {
-        ...state,
-        credentials: {
-          ...state.credentials,
-          [action.id]: action.value,
-        },
-      };
-    default:
-      return state;
+  if (action.type === UPDATE_AUTHENTICATION_VALUE) {
+    return {
+      ...state,
+      credentials: {
+        ...state.credentials,
+        [action.id]: action.value,
+      },
+    };
   }
+
+  return state;
 };
 
 const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
@@ -54,7 +53,7 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <KeyboardAvoidingView style={{ flex: 1 }}>
-        <Content style={{ marginTop: Dimensions.get('window').height / 5 }}>
+        <Container style={{ marginTop: Dimensions.get('window').height / 5 }}>
           <Title style={{ marginHorizontal: 20, marginBottom: 50 }}>Login</Title>
 
           <FormField
@@ -85,11 +84,18 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
               title="Log In"
               onPress={() => {
                 dispatch(authenticateUser(formState.credentials));
+                props.navigation.navigate('AuthLoading');
               }}
               color={Colors.primary}
             />
+
+            <Link onPress={() => props.navigation.navigate('Register')} style={{ marginTop: 20 }}>
+              Sign Up
+            </Link>
           </View>
-        </Content>
+
+
+        </Container>
       </KeyboardAvoidingView>
     </ScrollView>
   );

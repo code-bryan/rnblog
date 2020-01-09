@@ -1,5 +1,5 @@
 class User {
-  id: string = '';
+  uid: string = '';
 
   email: string = '';
 
@@ -14,6 +14,8 @@ class User {
   avatar: string = '';
 
   description: string = '';
+
+  apiKey: string = '';
 }
 
 export default User;

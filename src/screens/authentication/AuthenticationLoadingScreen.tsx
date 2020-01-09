@@ -1,18 +1,24 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ActivityIndicator, StatusBar, View } from 'react-native';
-import { useStore } from "react-redux";
-import User from "../../models/User";
-import { NavigationStackScreenComponent } from "react-navigation-stack";
+import { useSelector } from 'react-redux';
+import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import User from '../../models/User';
 
 type Params = {};
 type ScreenProps = {};
 
-
 const AuthenticationLoadingScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
+  const { navigation } = props;
+  const userAuthenticated = useSelector((state: any) => state.auth.user) as User;
+
   const verifyAppState = useCallback(() => {
-    const userAuthenticated = useStore(state => state.auth.user) as User;
-    props.navigation.navigate(userAuthenticated.apiKey.length > 0 ? 'App' : 'Auth');
-  }, []);
+    console.log(userAuthenticated.apiKey.length > 0);
+    navigation.navigate(userAuthenticated.apiKey.length > 0 ? 'App' : 'Auth');
+  }, [navigation, userAuthenticated]);
+
+  useEffect(() => {
+    verifyAppState();
+  }, [verifyAppState]);
 
   return (
     <View>
@@ -21,3 +27,5 @@ const AuthenticationLoadingScreen: NavigationStackScreenComponent<Params, Screen
     </View>
   );
 };
+
+export default AuthenticationLoadingScreen;

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import React, { useCallback, useEffect, useReducer } from 'react';
-import { Platform, View } from 'react-native';
-import TextAlert from './Alert';
-import Colors from '../../constants/Colors';
+import { Platform } from 'react-native';
+import TextAlert from '../Text/Alert';
 
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
 const VALUE_CHANGE = 'VALUE_CHANGE';
@@ -69,7 +68,7 @@ const FieldTextInput = styled.TextInput`
   margin-top: ${Platform.OS === 'ios' ? '10px' : '0'};
 `;
 
-const FormField: React.FC<Props> = (props: Props) => {
+const Field: React.FC<Props> = (props: Props) => {
   const {
     id, label, type, keyboardType, onChange, defaultValue, valid, autoCapitalize,
   } = props;
@@ -144,4 +143,4 @@ const FormField: React.FC<Props> = (props: Props) => {
   );
 };
 
-export default FormField;
+export default Field;

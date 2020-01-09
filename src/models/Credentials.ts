@@ -1,7 +1,7 @@
-class Authentication {
+class Credentials {
   email: string = '';
 
   password: string = '';
 }
 
-export default Authentication;
+export default Credentials;

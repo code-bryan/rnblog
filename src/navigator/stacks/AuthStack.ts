@@ -4,7 +4,7 @@ import ForgotPasswordScreen from '../../screens/authentication/ForgotPasswordScr
 import RegisterScreen from '../../screens/authentication/RegisterScreen';
 import DefaultStackNavigationOptions from '../DefaultStackNavigationOptions';
 
-const UserStack = createStackNavigator({
+const AuthStack = createStackNavigator({
   Login: LoginScreen,
   ForgotPassword: ForgotPasswordScreen,
   Register: RegisterScreen,
@@ -14,4 +14,4 @@ const UserStack = createStackNavigator({
   },
 });
 
-export default UserStack;
+export default AuthStack;
