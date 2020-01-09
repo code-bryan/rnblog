@@ -6,8 +6,11 @@ import {
 import FormField from '../../components/UI/FormField';
 import Content from '../../components/UI/Content';
 import Colors from '../../constants/Colors';
-import Authentication from '../../models/Authentication';
+import Credentials from '../../models/Credentials';
 import Title from '../../components/UI/Title';
+import { authenticateUser } from "../../store/modules/Authentication";
+import AuthenticationService from "../../services/AuthenticationService";
+import { useDispatch } from "react-redux";
 
 type Params = {};
 type ScreenProps = {};
@@ -15,7 +18,7 @@ type ScreenProps = {};
 const UPDATE_AUTHENTICATION_VALUE = 'UPDATE_AUTHENTICATION_VALUE';
 
 interface LoginScreenReducerValues {
-  authentication: Authentication,
+  credentials: Credentials,
   isValid: false
 }
 
@@ -24,8 +27,8 @@ const LoginScreenReducer = (state: LoginScreenReducerValues, action: any) => {
     case UPDATE_AUTHENTICATION_VALUE:
       return {
         ...state,
-        authentication: {
-          ...state.authentication,
+        credentials: {
+          ...state.credentials,
           [action.id]: action.value,
         },
       };
@@ -36,10 +39,11 @@ const LoginScreenReducer = (state: LoginScreenReducerValues, action: any) => {
 
 const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
   const loginScreenReducerValues: LoginScreenReducerValues = {
-    authentication: new Authentication(),
+    credentials: new Credentials(),
     isValid: false,
   };
   const [formState, dispatchForm] = useReducer(LoginScreenReducer, loginScreenReducerValues);
+  const dispatch = useDispatch();
 
   const onInputChange = useCallback((id: string, value: string, isValid: boolean) => {
     dispatchForm({
@@ -59,8 +63,8 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
             label="Email"
             required
             email
-            valid={!!formState.authentication.email}
-            defaultValue={formState.authentication.email}
+            valid={!!formState.credentials.email}
+            defaultValue={formState.credentials.email}
             autoCapitalize="none"
             onChange={onInputChange}
           />
@@ -69,8 +73,8 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
             id="password"
             type="password"
             label="Password"
-            valid={!!formState.authentication.password}
-            defaultValue={formState.authentication.password}
+            valid={!!formState.credentials.password}
+            defaultValue={formState.credentials.password}
             required
             minLength={6}
             onChange={onInputChange}
@@ -80,6 +84,7 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
             <Button
               title="Log In"
               onPress={() => {
+                dispatch(authenticateUser(formState.credentials));
               }}
               color={Colors.primary}
             />
