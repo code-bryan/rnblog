@@ -9,9 +9,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import React from 'react';
-import { useDispatch } from "react-redux";
-import { logout } from "../store/modules/Authentication";
-import { NavigationStackScreenComponent } from "react-navigation-stack";
+import { useDispatch } from 'react-redux';
+import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import { logout } from '../store/modules/Authentication';
 
 declare const global: { HermesInternal: null | {} };
 
@@ -55,9 +55,10 @@ const styles = StyleSheet.create({
 });
 
 const HomeScreen: NavigationStackScreenComponent = (props) => {
+  const { navigation } = props;
   const dispatch = useDispatch();
   dispatch(logout());
-  props.navigation.navigate('AuthLoading');
+  navigation.navigate('AuthLoading');
   return (
     <>
       <StatusBar barStyle="dark-content" />

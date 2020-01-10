@@ -1,33 +1,40 @@
-import firebase from 'firebase';
+import firebase, { User as FirebaseUser } from 'firebase';
 import Credentials from '../models/Credentials';
 import User from '../models/User';
 import BasicRegistration from '../models/BasicRegistration';
 
 class AuthenticationService {
-  private user: User = new User();
-
   async authenticateUser(credentials: Credentials): Promise<User> {
-    const authentication = await firebase.auth()
+    const authUser = await firebase.auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password);
 
-    this.user.uid = authentication.user?.uid as string;
-    this.user.email = authentication.user?.email as string;
-    this.user.password = credentials.password;
-    this.user.apiKey = await authentication.user?.getIdToken() as string;
+    const user = await User.fromAuthUser(authUser.user as FirebaseUser, credentials.password);
 
-    return this.user;
+    return user;
   }
 
-  async registerUser(basicRegistration: BasicRegistration) {
-    const newUser = await firebase.auth()
+  async registerAuthUser(basicRegistration: BasicRegistration): Promise<User> {
+    const createdAuthUser = await firebase.auth()
       .createUserWithEmailAndPassword(basicRegistration.email, basicRegistration.password);
 
-    this.user.uid = newUser.user?.uid as string;
-    this.user.email = newUser.user?.email as string;
-    this.user.password = basicRegistration.password;
-    this.user.apiKey = await newUser.user?.getIdToken() as string;
+    const user = await User
+      .fromAuthUser(createdAuthUser.user as FirebaseUser, basicRegistration.password);
 
-    console.log(this.user);
+    return user;
+  }
+
+  async completeUserRegistration(user: User) {
+    const users = await firebase.firestore()
+      .collection('users')
+      .where('username', '==', user.username)
+      .get();
+
+    if (users.size >= 1) {
+      throw new Error('Username is already in use');
+    }
+
+    await firebase.firestore().collection('users').add(user);
+    return user;
   }
 }
 

@@ -19,6 +19,8 @@ type Props = {
   keyboardType?: string;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   secureTextEntry?: boolean;
+  rounded?: boolean;
+  numberOfLines?: number;
 };
 
 interface InputReducerValues {
@@ -47,7 +49,7 @@ const InputReducer = (state: InputReducerValues, action: any) => {
 
 const Field: React.FC<Props> = (props: Props) => {
   const {
-    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry,
+    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry, rounded, numberOfLines,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -103,7 +105,7 @@ const Field: React.FC<Props> = (props: Props) => {
 
   return (
     <View style={{ marginBottom: 20 }}>
-      <Item rounded style={{ paddingLeft: 15 }}>
+      <Item rounded={rounded} style={{ paddingLeft: 15 }}>
         <Input
           placeholder={label}
           autoCapitalize={autoCapitalize}
@@ -111,12 +113,13 @@ const Field: React.FC<Props> = (props: Props) => {
           value={state.value}
           onBlur={onTouchedInput}
           onChangeText={onInputTextChange}
+          numberOfLines={numberOfLines}
         />
 
       </Item>
       <View style={{ marginLeft: 15 }}>
         {!state.isValid && state.touched && (
-          <TextAlert>This input is not valid</TextAlert>
+          <TextAlert style={{ marginTop: 10 }}>This input is not valid</TextAlert>
         )}
       </View>
     </View>

@@ -9,10 +9,9 @@ type ScreenProps = {};
 
 const AuthenticationLoadingScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
   const { navigation } = props;
-  const userAuthenticated = useSelector((state: any) => state.auth.user) as User;
+  const userAuthenticated: User = useSelector((state: any) => state.auth.user);
 
   const verifyAppState = useCallback(() => {
-    console.log(userAuthenticated.apiKey.length > 0);
     navigation.navigate(userAuthenticated.apiKey.length > 0 ? 'App' : 'Auth');
   }, [navigation, userAuthenticated]);
 

@@ -1,17 +1,18 @@
-import React, { useCallback, useReducer } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useReducer } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
   Dimensions, KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import {
-  Button, Container, Content, Form, Text, View,
+  Button, Container, Content, Form, Text, Toast, View,
 } from 'native-base';
 
 import Field from '../../components/UI/Form/Field';
 import Credentials from '../../models/Credentials';
 import Title from '../../components/UI/Text/Title';
-import { authenticateUser } from '../../store/modules/Authentication';
+import { authenticateUser, cleanAuthError } from '../../store/modules/Authentication';
+import User from '../../models/User';
 
 type Params = {};
 type ScreenProps = {};
@@ -37,12 +38,16 @@ const LoginScreenReducer = (state: LoginScreenReducerValues, action: any) => {
   return state;
 };
 
+const loginScreenReducerValues: LoginScreenReducerValues = {
+  credentials: new Credentials(),
+  isValid: false,
+};
+
 const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
-  const loginScreenReducerValues: LoginScreenReducerValues = {
-    credentials: new Credentials(),
-    isValid: false,
-  };
   const [formState, dispatchForm] = useReducer(LoginScreenReducer, loginScreenReducerValues);
+  const user: User = useSelector((state) => state.auth.user);
+  const isNewUser: boolean = useSelector((state) => state.auth.isNewUser);
+  const errorMessage = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
 
   const onInputChangeHandler = useCallback((id: string, value: string, isValid: boolean) => {
@@ -51,10 +56,28 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     });
   }, [dispatchForm]);
 
-  const onSubmitHandler = useCallback(() => {
-    dispatch(authenticateUser(formState.credentials));
-    props.navigation.navigate('AuthLoading');
-  }, [dispatch, formState]);
+  const onSubmitHandler = useCallback(async () => {
+    await dispatch(authenticateUser(formState.credentials));
+  }, [dispatch, formState, errorMessage]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      Toast.show({
+        text: errorMessage,
+        buttonText: 'Close',
+        duration: 3000,
+        onClose: () => {
+          dispatch(cleanAuthError());
+        },
+      });
+    }
+  }, [dispatch, errorMessage]);
+
+  useEffect(() => {
+    if (user.uid.length > 0 && !isNewUser) {
+      props.navigation.navigate('AuthLoading');
+    }
+  }, [user, isNewUser]);
 
   return (
     <Container style={{ flex: 1 }}>
@@ -69,6 +92,7 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
                   label="Email"
                   required
                   email
+                  rounded
                   valid={!!formState.credentials.email}
                   defaultValue={formState.credentials.email}
                   autoCapitalize="none"
@@ -81,6 +105,7 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
                   valid={!!formState.credentials.password}
                   defaultValue={formState.credentials.password}
                   required
+                  rounded
                   minLength={6}
                   autoCapitalize="none"
                   secureTextEntry
