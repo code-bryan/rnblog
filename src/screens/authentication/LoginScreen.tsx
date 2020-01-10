@@ -2,16 +2,16 @@ import React, { useCallback, useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Dimensions, KeyboardAvoidingView, Platform, ScrollView,
+  Dimensions, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import {
-  Button, Container, Content, Form, Text, View,
+  Button, Container, Content, Form, Header, Text, View,
 } from 'native-base';
 
 import Field from '../../components/UI/Form/Field';
 import Credentials from '../../models/Credentials';
 import Title from '../../components/UI/Text/Title';
-import { authenticateUser } from '../../store/modules/Authentication';
+import { authenticateUser, cleanAuthError } from '../../store/modules/Authentication';
 import User from '../../models/User';
 import ToastService from '../../services/ToastService';
 
@@ -72,9 +72,11 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
 
   useEffect(() => {
     if (errorMessage) {
-      ToastService.closeLabelToast(errorMessage);
+      ToastService.closeLabelToast(errorMessage, () => {
+        dispatch(cleanAuthError());
+      });
     }
-  }, [errorMessage]);
+  }, [errorMessage], dispatch);
 
   useEffect(() => {
     if (user.uid.length > 0 && !isNewUser) {
@@ -86,9 +88,10 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     <Container style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1 }}>
         <KeyboardAvoidingView style={{ flex: 1 }}>
-          <Content style={{ paddingTop: Dimensions.get('window').height / 5 }}>
+          <Header transparent />
+          <Content style={{ paddingTop: Dimensions.get('window').height / 7 }}>
             <Form>
-              <Title style={{ marginHorizontal: 35, marginBottom: Platform.OS === 'android' ? 50 : 50 }}>Login</Title>
+              <Title style={{ marginHorizontal: 35, marginBottom: 50 }}>Login</Title>
               <View style={{ marginHorizontal: 30 }}>
                 <Field
                   id="email"
