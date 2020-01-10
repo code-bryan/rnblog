@@ -10,6 +10,8 @@ import Field from '../../components/UI/Form/Field';
 import BasicRegistration from '../../models/BasicRegistration';
 import { cleanAuthError, registerAuthUser } from '../../store/modules/Authentication';
 import User from '../../models/User';
+import Submit from "../../components/UI/Button/Submit";
+import ToastService from "../../services/ToastService";
 
 type Params = {};
 type ScreenProps = {};
@@ -68,30 +70,21 @@ const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (pro
     const doesPasswordMatch = password.trim() === verifyPassword.trim();
 
     if (!doesPasswordMatch) {
-      Toast.show({
-        text: 'The password does not match',
-        buttonText: 'Close',
-        duration: 3000,
-      });
+      ToastService.closeLabelToast('The password does not match');
     }
 
     return doesPasswordMatch;
   }, [formState]);
 
-  const submitHandler = useCallback(async () => {
+  const onSubmitHandler = useCallback(async () => {
     if (verifyPasswordMatch()) {
       try {
         dispatchForm({ type: UPDATE_LOADING, isLoading: true });
         dispatch(registerAuthUser(formState.data));
       } catch (e) {
         dispatchForm({ type: UPDATE_LOADING, isLoading: false });
-        Toast.show({
-          text: e.message,
-          buttonText: 'Close',
-          duration: 3000,
-          onClose: () => {
-            dispatch(cleanAuthError());
-          },
+        ToastService.closeLabelToast(e.message, () => {
+          dispatch(cleanAuthError());
         });
       }
     }
@@ -100,13 +93,8 @@ const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (pro
   useEffect(() => {
     if (errorMessage) {
       dispatchForm({ type: UPDATE_LOADING, isLoading: false });
-      Toast.show({
-        text: errorMessage,
-        buttonText: 'Close',
-        duration: 3000,
-        onClose: () => {
-          dispatch(cleanAuthError());
-        },
+      ToastService.closeLabelToast(errorMessage, () => {
+        dispatch(cleanAuthError());
       });
     }
   }, [errorMessage, dispatch]);
@@ -161,18 +149,7 @@ const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (pro
               </Content>
             </CardItem>
             <CardItem footer>
-              <Button
-                rounded
-                style={{ marginHorizontal: 50, marginBottom: 10 }}
-                onPress={submitHandler}
-              >
-                { formState.isLoading && (<Spinner style={{ width: '100%' }} color="white" size="small" />) }
-                { !formState.isLoading && (
-                  <Text style={{ textAlign: 'center', width: '100%' }}>
-                    Submit
-                  </Text>
-                ) }
-              </Button>
+              <Submit label="Submit" loading={formState.isLoading} onSubmit={onSubmitHandler} />
             </CardItem>
           </Card>
 

@@ -1,14 +1,15 @@
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import React, { useCallback, useEffect, useReducer } from 'react';
 import {
-  Button, Card, CardItem, Container, Content, Form, Header, Spinner, Text, Toast,
+  Button, Card, CardItem, Container, Content, Form, Header, Spinner, Text,
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
+import { KeyboardAvoidingView } from 'react-native';
 import User from '../../models/User';
 import Title from '../../components/UI/Text/Title';
 import Field from '../../components/UI/Form/Field';
 import { cleanAuthError, completeRegistration } from '../../store/modules/Authentication';
-import BasicRegistration from '../../models/BasicRegistration';
+import ToastService from '../../services/ToastService';
 
 type Params = {};
 type ScreenProps = {};
@@ -77,13 +78,8 @@ const CompleteRegistrationScreen: NavigationStackScreenComponent<Params, ScreenP
   useEffect(() => {
     if (errorMessage) {
       formDispatch({ type: UPDATE_LOADING, isLoading: false });
-      Toast.show({
-        text: errorMessage,
-        buttonText: 'Close',
-        duration: 3000,
-        onClose: () => {
-          dispatch(cleanAuthError());
-        },
+      ToastService.closeLabelToast(errorMessage, () => {
+        dispatch(cleanAuthError());
       });
     }
   }, [errorMessage, dispatch, formDispatch]);
@@ -94,7 +90,7 @@ const CompleteRegistrationScreen: NavigationStackScreenComponent<Params, ScreenP
       <Content padder>
         <Card>
           <CardItem header>
-            <Title>Registration</Title>
+            <Title style={{ width: '100%', textAlign: 'center' }}>User info</Title>
           </CardItem>
           <CardItem>
             <Content>
@@ -135,18 +131,20 @@ const CompleteRegistrationScreen: NavigationStackScreenComponent<Params, ScreenP
             </Content>
           </CardItem>
           <CardItem footer>
-            <Button
-              rounded
-              onPress={onSubmitHandler}
-              style={{ marginHorizontal: 50, marginBottom: 10 }}
-            >
-              {formState.isLoading && (<Spinner style={{ width: '100%' }} color="white" size="small" />)}
-              {!formState.isLoading && (
-                <Text style={{ textAlign: 'center', width: '100%' }}>
-                  Complete registration
-                </Text>
-              )}
-            </Button>
+            <KeyboardAvoidingView>
+              <Button
+                rounded
+                onPress={onSubmitHandler}
+                style={{ marginHorizontal: 50, marginBottom: 10 }}
+              >
+                {formState.isLoading && (<Spinner style={{ width: '100%' }} color="white" size="small" />)}
+                {!formState.isLoading && (
+                  <Text style={{ textAlign: 'center', width: '100%' }}>
+                    Complete registration
+                  </Text>
+                )}
+              </Button>
+            </KeyboardAvoidingView>
           </CardItem>
         </Card>
       </Content>

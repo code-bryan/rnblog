@@ -5,14 +5,15 @@ import {
   Dimensions, KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import {
-  Button, Container, Content, Form, Text, Toast, View,
+  Button, Container, Content, Form, Text, View,
 } from 'native-base';
 
 import Field from '../../components/UI/Form/Field';
 import Credentials from '../../models/Credentials';
 import Title from '../../components/UI/Text/Title';
-import { authenticateUser, cleanAuthError } from '../../store/modules/Authentication';
+import { authenticateUser } from '../../store/modules/Authentication';
 import User from '../../models/User';
+import ToastService from '../../services/ToastService';
 
 type Params = {};
 type ScreenProps = {};
@@ -60,18 +61,20 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     await dispatch(authenticateUser(formState.credentials));
   }, [dispatch, formState, errorMessage]);
 
+  const onForgotPasswordHandler = useCallback(() => {
+    props.navigation.navigate({
+      routeName: 'ForgotPassword',
+      params: {
+        email: formState.credentials.email,
+      },
+    });
+  }, [formState]);
+
   useEffect(() => {
     if (errorMessage) {
-      Toast.show({
-        text: errorMessage,
-        buttonText: 'Close',
-        duration: 3000,
-        onClose: () => {
-          dispatch(cleanAuthError());
-        },
-      });
+      ToastService.closeLabelToast(errorMessage);
     }
-  }, [dispatch, errorMessage]);
+  }, [errorMessage]);
 
   useEffect(() => {
     if (user.uid.length > 0 && !isNewUser) {
@@ -81,7 +84,7 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
 
   return (
     <Container style={{ flex: 1 }}>
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }}>
         <KeyboardAvoidingView style={{ flex: 1 }}>
           <Content style={{ paddingTop: Dimensions.get('window').height / 5 }}>
             <Form>
@@ -99,18 +102,24 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
                   onChange={onInputChangeHandler}
                 />
 
-                <Field
-                  id="password"
-                  label="Password"
-                  valid={!!formState.credentials.password}
-                  defaultValue={formState.credentials.password}
-                  required
-                  rounded
-                  minLength={6}
-                  autoCapitalize="none"
-                  secureTextEntry
-                  onChange={onInputChangeHandler}
-                />
+                <View>
+                  <Field
+                    id="password"
+                    label="Password"
+                    valid={!!formState.credentials.password}
+                    defaultValue={formState.credentials.password}
+                    required
+                    rounded
+                    minLength={6}
+                    autoCapitalize="none"
+                    secureTextEntry
+                    last
+                    onChange={onInputChangeHandler}
+                  />
+                  <Button transparent block onPress={onForgotPasswordHandler}>
+                    <Text style={{ width: '100%', textAlign: 'right' }}>Forgot password</Text>
+                  </Button>
+                </View>
               </View>
 
               <View style={{ marginVertical: 20, marginHorizontal: '25%' }}>

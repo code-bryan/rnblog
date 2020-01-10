@@ -36,6 +36,10 @@ class AuthenticationService {
     await firebase.firestore().collection('users').add(user);
     return user;
   }
+
+  async forgotPassword(email: string) {
+    await firebase.auth().sendPasswordResetEmail(email);
+  }
 }
 
 export default new AuthenticationService();

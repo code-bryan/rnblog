@@ -21,6 +21,7 @@ type Props = {
   secureTextEntry?: boolean;
   rounded?: boolean;
   numberOfLines?: number;
+  last?: boolean;
 };
 
 interface InputReducerValues {
@@ -49,7 +50,7 @@ const InputReducer = (state: InputReducerValues, action: any) => {
 
 const Field: React.FC<Props> = (props: Props) => {
   const {
-    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry, rounded, numberOfLines,
+    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry, rounded, numberOfLines, last,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -104,7 +105,7 @@ const Field: React.FC<Props> = (props: Props) => {
   }, [id, dispatch]);
 
   return (
-    <View style={{ marginBottom: 20 }}>
+    <View style={{ marginBottom: !last ? 20 : 0 }}>
       <Item rounded={rounded} style={{ paddingLeft: 15 }}>
         <Input
           placeholder={label}
