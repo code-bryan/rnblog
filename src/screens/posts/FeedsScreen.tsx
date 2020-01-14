@@ -9,7 +9,7 @@ import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import { getAllPosts, getByCategory, postDetails, setRefreshing } from '../../store/modules/Posts';
+import { getAllPosts, postDetails, setRefreshing } from '../../store/modules/Posts';
 import Title from '../../components/atoms/text/Title';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import Post from '../../models/Post';
@@ -25,6 +25,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
 
@@ -47,7 +53,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   }, [navigation, dispatch, posts]);
 
   const onSelectedCategoryHandler = useCallback((categoryId: number) => {
-    dispatch(getByCategory(categoryId));
+    dispatch(getAllPosts(categoryId));
     dispatch(setRefreshing(true));
   }, [dispatch]);
 
@@ -70,6 +76,12 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         </View>
 
         <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
+
+        {posts.length <= 0 && (
+          <View style={styles.errorContainer}>
+            <Title>There are not post available</Title>
+          </View>
+        )}
 
         <PostList posts={posts} onSelectedPost={onSelectedPostHandler} />
       </Content>

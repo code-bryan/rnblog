@@ -24,7 +24,6 @@ const INITIAL_STATE: UserState = {
 const UPDATE_CATEGORIES = 'UPDATE_CATEGORIES';
 const GET_ALL_POSTS = 'GET_ALL_POSTS';
 const ADD_LIKES = 'ADD_LIKES';
-const GET_BY_CATEGORY = 'GET_BY_CATEGORY';
 const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 const SET_REFRESHING = 'SET_REFRESHING';
 const POST_DETAILS = 'POST_DETAILS';
@@ -39,7 +38,8 @@ const Reducer = (state: UserState = INITIAL_STATE, action: any) => {
     case GET_ALL_POSTS:
       return {
         ...state,
-        posts: action.posts,
+        posts: action.payload.posts,
+        selectedCategoryId: action.payload.categoryId,
       };
     case ADD_LIKES:
       return {
@@ -62,12 +62,6 @@ const Reducer = (state: UserState = INITIAL_STATE, action: any) => {
         ...state,
         post: action.payload,
       };
-    case GET_BY_CATEGORY:
-      return {
-        ...state,
-        posts: action.payload.posts,
-        selectedCategoryId: action.payload.categoryId,
-      };
     default:
       return state;
   }
@@ -75,10 +69,13 @@ const Reducer = (state: UserState = INITIAL_STATE, action: any) => {
 
 export const updateCategories = () => (dispatch: any) => dispatch({ type: UPDATE_CATEGORIES });
 
-export const getAllPosts = () => async (dispatch: any) => {
+export const getAllPosts = (categoryId?: number) => async (dispatch: any, getState: any) => {
   try {
-    const posts = await PostService.getALLPosts();
-    dispatch({ type: GET_ALL_POSTS, posts });
+    const { posts } = getState();
+    const category = categoryId || posts.selectedCategoryId;
+
+    const allPosts = await PostService.getALLPosts(category);
+    dispatch({ type: GET_ALL_POSTS, payload: { posts: allPosts, categoryId: category } });
   } catch (e) {
     dispatch({ type: SET_ERROR_MESSAGE, error: e.message });
   }
@@ -94,17 +91,6 @@ export const addLike = (post: Post) => async (dispatch: any) => {
   } catch (e) {
     dispatch({ type: SET_ERROR_MESSAGE, error: e.message });
   }
-};
-
-export const getByCategory = (categoryId: number) => async (dispatch: any) => {
-  try {
-    const posts = await PostService.getByCategory(categoryId);
-    dispatch({ type: GET_BY_CATEGORY, payload: { posts, categoryId } });
-  } catch (e) {
-    dispatch({ type: SET_ERROR_MESSAGE, error: e.message });
-  }
-
-  dispatch({ type: SET_REFRESHING, refreshing: false });
 };
 
 export const postDetails = (post: Post) => async (dispatch: any) => {

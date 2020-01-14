@@ -2,32 +2,27 @@ import firebase from 'firebase';
 import Post from '../models/Post';
 
 class PostService {
-  async getALLPosts(): Promise<Post[]> {
+  // eslint-disable-next-line class-methods-use-this
+  async getALLPosts(categoryId?: number): Promise<Post[]> {
     const postsFromFirestore = await firebase.firestore().collection('posts').get();
-    const posts: Post[] = [];
+    let allPosts: Post[] = [];
 
     postsFromFirestore.docs.forEach((item) => {
       const post: Post = item.data() as Post;
       post.id = item.id;
-      posts.push(post);
+      allPosts.push(post);
     });
 
-    return posts;
+    if (categoryId && categoryId > 1) {
+      allPosts = allPosts.filter((post) => post.category.id === categoryId);
+    }
+
+    return allPosts;
   }
 
   async AddLike(post: Post): Promise<Post[]> {
     await firebase.firestore().collection('posts').doc(post.id).set(post);
     return this.getALLPosts();
-  }
-
-  async getByCategory(categoryId: number): Promise<Post[]> {
-    let allPosts: Post[] = await this.getALLPosts();
-
-    if (categoryId > 1) {
-      allPosts = allPosts.filter((post) => post.category.id === categoryId);
-    }
-
-    return allPosts;
   }
 }
 
