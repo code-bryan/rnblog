@@ -1,11 +1,18 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 import AuthStack from './stacks/AuthStack';
 import AuthenticationLoadingScreen from '../screens/authentication/AuthenticationLoadingScreen';
-import HomeScreen from '../screens/HomeScreen';
+import PostStack from './stacks/PostStack';
+
+const DrawerStack = createDrawerNavigator({
+  Post: PostStack,
+}, {
+  initialRouteName: 'Post',
+});
 
 const switchNavigation = createSwitchNavigator({
   AuthLoading: AuthenticationLoadingScreen,
-  App: HomeScreen,
+  App: DrawerStack,
   Auth: AuthStack,
 }, {
   initialRouteName: 'AuthLoading',

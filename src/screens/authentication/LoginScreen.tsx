@@ -1,47 +1,53 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
+import { Dimensions, KeyboardAvoidingView, ScrollView } from 'react-native';
 import {
-  Dimensions, KeyboardAvoidingView, ScrollView,
-} from 'react-native';
-import {
-  Button, Container, Content, Form, Header, Text, View,
+  Button, Container, Content, Header, Text, View,
 } from 'native-base';
-
-import Field from '../../components/UI/Form/Field';
 import Credentials from '../../models/Credentials';
-import Title from '../../components/UI/Text/Title';
 import { authenticateUser, cleanAuthError } from '../../store/modules/Authentication';
 import User from '../../models/User';
 import ToastService from '../../services/ToastService';
+import Submit from '../../components/atoms/button/Submit';
+import FormLogin from '../../components/organisms/FormLogin';
 
 type Params = {};
 type ScreenProps = {};
 
 const UPDATE_AUTHENTICATION_VALUE = 'UPDATE_AUTHENTICATION_VALUE';
+const UPDATE_LOADING = 'UPDATE_LOADING';
 
 interface LoginScreenReducerValues {
   credentials: Credentials,
-  isValid: false
+  isValid: boolean,
+  loading: boolean
 }
 
 const LoginScreenReducer = (state: LoginScreenReducerValues, action: any) => {
-  if (action.type === UPDATE_AUTHENTICATION_VALUE) {
-    return {
-      ...state,
-      credentials: {
-        ...state.credentials,
-        [action.id]: action.value,
-      },
-    };
+  switch (action.type) {
+    case UPDATE_AUTHENTICATION_VALUE:
+      return {
+        ...state,
+        credentials: {
+          ...state.credentials,
+          [action.id]: action.value,
+        },
+      };
+    case UPDATE_LOADING:
+      return {
+        ...state,
+        loading: action.loading,
+      };
+    default:
+      return state;
   }
-
-  return state;
 };
 
 const loginScreenReducerValues: LoginScreenReducerValues = {
   credentials: new Credentials(),
   isValid: false,
+  loading: false,
 };
 
 const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
@@ -58,8 +64,9 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   }, [dispatchForm]);
 
   const onSubmitHandler = useCallback(async () => {
+    dispatchForm({ type: UPDATE_LOADING, loading: true });
     await dispatch(authenticateUser(formState.credentials));
-  }, [dispatch, formState, errorMessage]);
+  }, [dispatch, formState, errorMessage, dispatchForm]);
 
   const onForgotPasswordHandler = useCallback(() => {
     props.navigation.navigate({
@@ -72,11 +79,12 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
 
   useEffect(() => {
     if (errorMessage) {
+      dispatchForm({ type: UPDATE_LOADING, loading: false });
       ToastService.closeLabelToast(errorMessage, () => {
         dispatch(cleanAuthError());
       });
     }
-  }, [errorMessage], dispatch);
+  }, [errorMessage, dispatch, dispatchForm]);
 
   useEffect(() => {
     if (user.uid.length > 0 && !isNewUser) {
@@ -90,51 +98,19 @@ const LoginScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         <KeyboardAvoidingView style={{ flex: 1 }}>
           <Header transparent />
           <Content style={{ paddingTop: Dimensions.get('window').height / 7 }}>
-            <Form>
-              <Title style={{ marginHorizontal: 35, marginBottom: 50 }}>Login</Title>
-              <View style={{ marginHorizontal: 30 }}>
-                <Field
-                  id="email"
-                  label="Email"
-                  required
-                  email
-                  rounded
-                  valid={!!formState.credentials.email}
-                  defaultValue={formState.credentials.email}
-                  autoCapitalize="none"
-                  onChange={onInputChangeHandler}
-                />
+            <FormLogin
+              credentials={formState.credentials}
+              onInputChange={onInputChangeHandler}
+              onForgotPassword={onForgotPasswordHandler}
+            />
 
-                <View>
-                  <Field
-                    id="password"
-                    label="Password"
-                    valid={!!formState.credentials.password}
-                    defaultValue={formState.credentials.password}
-                    required
-                    rounded
-                    minLength={6}
-                    autoCapitalize="none"
-                    secureTextEntry
-                    last
-                    onChange={onInputChangeHandler}
-                  />
-                  <Button transparent block onPress={onForgotPasswordHandler}>
-                    <Text style={{ width: '100%', textAlign: 'right' }}>Forgot password</Text>
-                  </Button>
-                </View>
-              </View>
+            <View style={{ marginVertical: 20, marginHorizontal: '25%' }}>
+              <Submit label="Log In" onSubmit={onSubmitHandler} loading={formState.loading} style={{ width: '100%', alignSelf: 'center' }} />
 
-              <View style={{ marginVertical: 20, marginHorizontal: '25%' }}>
-                <Button rounded onPress={onSubmitHandler}>
-                  <Text style={{ width: '100%', textAlign: 'center' }}>Log In</Text>
-                </Button>
-
-                <Button transparent onPress={() => props.navigation.navigate('Register')} style={{ marginTop: 20 }}>
-                  <Text style={{ width: '100%', textAlign: 'center' }}>Sign Up</Text>
-                </Button>
-              </View>
-            </Form>
+              <Button transparent onPress={() => props.navigation.navigate('Register')} style={{ marginTop: 20 }}>
+                <Text style={{ width: '100%', textAlign: 'center' }}>Sign Up</Text>
+              </Button>
+            </View>
 
           </Content>
         </KeyboardAvoidingView>

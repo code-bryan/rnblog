@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 
 const Alert = styled.Text`
   color: #ee5253;

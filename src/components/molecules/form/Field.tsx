@@ -1,28 +1,25 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
-import { Input, Item, View } from 'native-base';
-import TextAlert from '../Text/Alert';
+import {
+  Input, Item, NativeBase, View,
+} from 'native-base';
+import TextAlert from '../../atoms/text/Alert';
 
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
 const VALUE_CHANGE = 'VALUE_CHANGE';
 
-type Props = {
+interface Props extends NativeBase.Input{
   id: string,
   label: string;
-  onChange: Function;
-  defaultValue?: string | null;
   valid?: boolean;
   required?: boolean;
   email?: boolean;
   min?: number;
   max?: number;
-  minLength?: number;
-  keyboardType?: string;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  secureTextEntry?: boolean;
   rounded?: boolean;
-  numberOfLines?: number;
   last?: boolean;
-};
+  minLength?: number;
+  onInputChange?: Function;
+}
 
 interface InputReducerValues {
   value: string;
@@ -50,7 +47,16 @@ const InputReducer = (state: InputReducerValues, action: any) => {
 
 const Field: React.FC<Props> = (props: Props) => {
   const {
-    id, label, onChange, defaultValue, valid, autoCapitalize, secureTextEntry, rounded, numberOfLines, last,
+    id,
+    label,
+    onInputChange,
+    defaultValue,
+    valid,
+    autoCapitalize,
+    secureTextEntry,
+    rounded,
+    numberOfLines,
+    last,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -66,10 +72,10 @@ const Field: React.FC<Props> = (props: Props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (state.touched) {
-      onChange(id, state.value, state.isValid);
+    if (state.touched && onInputChange) {
+      onInputChange(id, state.value, state.isValid);
     }
-  }, [state, onChange]);
+  }, [state, onInputChange]);
 
   const onInputTextChange = useCallback((text: string) => {
     // eslint-disable-next-line no-useless-escape

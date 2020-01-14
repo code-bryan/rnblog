@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Button, Card, CardItem, Container, Content, Form, Header, Spinner, Text, Toast,
+  Card, CardItem, Container, Content, Header,
 } from 'native-base';
 import { Dimensions, KeyboardAvoidingView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import Title from '../../components/UI/Text/Title';
-import Field from '../../components/UI/Form/Field';
+import Title from '../../components/atoms/text/Title';
 import BasicRegistration from '../../models/BasicRegistration';
 import { cleanAuthError, registerAuthUser } from '../../store/modules/Authentication';
 import User from '../../models/User';
-import Submit from "../../components/UI/Button/Submit";
-import ToastService from "../../services/ToastService";
+import Submit from '../../components/atoms/button/Submit';
+import ToastService from '../../services/ToastService';
+import BasicRegistrationForm from '../../components/organisms/BasicRegistrationForm';
 
 type Params = {};
 type ScreenProps = {};
@@ -46,6 +46,7 @@ const RegisterScreenReducer = (state: any, action: any) => {
 };
 
 const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { navigation } = props;
 
   const registerScreenValues: RegisterScreenValues = {
@@ -59,7 +60,7 @@ const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (pro
   const errorMessage = useSelector((state: any) => state.auth.error);
   const dispatch = useDispatch();
 
-  const inputChangeHandler = useCallback((id: string, value: string, isValid: boolean) => {
+  const onInputChangeHandler = useCallback((id: string, value: string, isValid: boolean) => {
     dispatchForm({
       type: UPDATE_INPUT_DATA, id, value, isValid,
     });
@@ -116,36 +117,10 @@ const RegisterScreen: NavigationStackScreenComponent<Params, ScreenProps> = (pro
             </CardItem>
             <CardItem>
               <Content>
-                <Form>
-                  <Field
-                    id="email"
-                    label="Email"
-                    defaultValue={formState.data.email}
-                    onChange={inputChangeHandler}
-                    autoCapitalize="none"
-                    email
-                  />
-
-                  <Field
-                    id="password"
-                    label="Password"
-                    defaultValue={formState.data.password}
-                    onChange={inputChangeHandler}
-                    required
-                    minLength={6}
-                    secureTextEntry
-                  />
-
-                  <Field
-                    id="verifyPassword"
-                    label="Verify password"
-                    defaultValue={formState.data.verifyPassword}
-                    onChange={inputChangeHandler}
-                    required
-                    minLength={6}
-                    secureTextEntry
-                  />
-                </Form>
+                <BasicRegistrationForm
+                  basicRegistration={formState.data}
+                  onInputChange={onInputChangeHandler}
+                />
               </Content>
             </CardItem>
             <CardItem footer>

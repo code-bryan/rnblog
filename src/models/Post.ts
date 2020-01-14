@@ -1,21 +1,25 @@
 import Comment from './Comment';
+import Category from './Category';
+import User from './User';
 
 class Post {
-  id: number = 0;
+  id: string = '';
 
   title: string = '';
 
   body: string = '';
 
-  author: number = 0;
+  author: User = new User();
 
   publishDate: string = '';
 
-  categoryId: number = 0;
+  category: Category = new Category();
 
   likes: number = 0;
 
   comments: Comment[] = [];
+
+  image: string = '';
 }
 
 export default Post;

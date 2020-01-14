@@ -1,15 +1,16 @@
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import React, { useCallback, useEffect, useReducer } from 'react';
 import {
-  Button, Card, CardItem, Container, Content, Form, Header, Spinner, Text,
+  Card, CardItem, Container, Content, Header,
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAvoidingView } from 'react-native';
 import User from '../../models/User';
-import Title from '../../components/UI/Text/Title';
-import Field from '../../components/UI/Form/Field';
+import Title from '../../components/atoms/text/Title';
 import { cleanAuthError, completeRegistration } from '../../store/modules/Authentication';
 import ToastService from '../../services/ToastService';
+import Submit from '../../components/atoms/button/Submit';
+import FullRegistrationForm from '../../components/organisms/FullRegistrationForm';
 
 type Params = {};
 type ScreenProps = {};
@@ -44,6 +45,7 @@ const CompleteRegistrationScreenReducer = (state: any, action: any) => {
 };
 
 const CompleteRegistrationScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { navigation } = props;
   const user: User = useSelector((state: any) => state.auth.user);
   const errorMessage: string = useSelector((state: any) => state.auth.error);
@@ -94,56 +96,12 @@ const CompleteRegistrationScreen: NavigationStackScreenComponent<Params, ScreenP
           </CardItem>
           <CardItem>
             <Content>
-              <Form>
-                <Field
-                  id="name"
-                  label="Name"
-                  required
-                  defaultValue={formState.data.name}
-                  onChange={onInputChangeHandler}
-                />
-
-                <Field
-                  id="lastname"
-                  label="Lastname"
-                  required
-                  defaultValue={formState.data.lastname}
-                  onChange={onInputChangeHandler}
-                />
-
-                <Field
-                  id="username"
-                  label="Username"
-                  required
-                  autoCapitalize="none"
-                  defaultValue={formState.data.username}
-                  onChange={onInputChangeHandler}
-                />
-
-                <Field
-                  id="description"
-                  label="Description"
-                  numberOfLines={4}
-                  defaultValue={formState.data.description}
-                  onChange={onInputChangeHandler}
-                />
-              </Form>
+              <FullRegistrationForm user={formState.data} onInputChange={onInputChangeHandler} />
             </Content>
           </CardItem>
           <CardItem footer>
             <KeyboardAvoidingView>
-              <Button
-                rounded
-                onPress={onSubmitHandler}
-                style={{ marginHorizontal: 50, marginBottom: 10 }}
-              >
-                {formState.isLoading && (<Spinner style={{ width: '100%' }} color="white" size="small" />)}
-                {!formState.isLoading && (
-                  <Text style={{ textAlign: 'center', width: '100%' }}>
-                    Complete registration
-                  </Text>
-                )}
-              </Button>
+              <Submit label="Complete registration" onSubmit={onSubmitHandler} loading={formState.isLoading} />
             </KeyboardAvoidingView>
           </CardItem>
         </Card>

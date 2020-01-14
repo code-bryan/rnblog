@@ -8,7 +8,17 @@ class AuthenticationService {
     const authUser = await firebase.auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password);
 
-    const user = await User.fromAuthUser(authUser.user as FirebaseUser, credentials.password);
+    let user = new User();
+
+    const userFromFirestore = await firebase.firestore()
+      .collection('users')
+      .where('uid', '==', authUser.user?.uid)
+      .limit(1)
+      .get();
+
+    userFromFirestore.forEach((userFetched) => {
+      user = userFetched.data() as User;
+    });
 
     return user;
   }

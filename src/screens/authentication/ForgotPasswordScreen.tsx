@@ -1,20 +1,22 @@
 import React, { useCallback, useState } from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Container, Content, Header, Text, Card, CardItem, Form, Button, Spinner,
+  Card, CardItem, Container, Content, Form, Header,
 } from 'native-base';
 import {
   Alert, Dimensions, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
-import Title from '../../components/UI/Text/Title';
-import Field from '../../components/UI/Form/Field';
+import Title from '../../components/atoms/text/Title';
+import Field from '../../components/molecules/form/Field';
 import AuthenticationService from '../../services/AuthenticationService';
 import ToastService from '../../services/ToastService';
+import Submit from '../../components/atoms/button/Submit';
 
 type Params = {};
 type ScreenProps = {};
 
 const ForgotPasswordScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { navigation } = props;
   const emailFromNavigation = navigation.getParam('email');
   const [email, setEmail] = useState(emailFromNavigation || '');
@@ -64,24 +66,13 @@ const ForgotPasswordScreen: NavigationStackScreenComponent<Params, ScreenProps> 
                       email
                       autoCapitalize="none"
                       defaultValue={email}
-                      onChange={onInputChangeHandler}
+                      onInputChange={onInputChangeHandler}
                     />
                   </Form>
                 </Content>
               </CardItem>
               <CardItem footer>
-                <Button
-                  rounded
-                  style={{ marginHorizontal: 50, marginBottom: 10 }}
-                  onPress={onSubmitHandler}
-                >
-                  {loading && (<Spinner style={{ width: '100%' }} color="white" size="small" />)}
-                  {!loading && (
-                    <Text style={{ textAlign: 'center', width: '100%' }}>
-                      Reset password
-                    </Text>
-                  )}
-                </Button>
+                <Submit label="Reset Password" onSubmit={onSubmitHandler} loading={loading} />
               </CardItem>
             </Card>
           </Content>

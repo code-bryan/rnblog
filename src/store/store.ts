@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import app from './modules/App';
 import auth from './modules/Authentication';
+import posts from './modules/Posts';
 
 const persistConfig: PersistConfig<any> = {
   key: 'root',
@@ -16,6 +17,7 @@ const persistConfig: PersistConfig<any> = {
 const rootReducers = combineReducers({
   app: app.Reducer,
   auth: auth.Reducer,
+  posts: posts.Reducer,
 });
 
 const rootPersistReducer = persistReducer(persistConfig, rootReducers);

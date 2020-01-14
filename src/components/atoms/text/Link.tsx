@@ -1,21 +1,17 @@
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import React from 'react';
 import {
-  Platform, View, TouchableNativeFeedback, TouchableOpacity,
+  Platform, TouchableNativeFeedback, TouchableOpacity,
 } from 'react-native';
+import { NativeBase } from 'native-base';
 import Colors from '../../../constants/Colors';
-
-interface Props {
-  onPress: Function,
-  style: object
-}
 
 const LinkText = styled.Text`
   color: ${Colors.primary};
   font-size: 18px;
 `;
 
-const LinkContainer = styled.View`
+const LinkContainer: NativeBase.View = styled.View`
   width: 100%;
   text-align: center;
   display: flex;
@@ -23,7 +19,7 @@ const LinkContainer = styled.View`
   align-items: center;
 `;
 
-const Link: React.FC<Props> = (props) => {
+const Link: React.FC<NativeBase.Text> = (props) => {
   let TouchableComponent: any = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= '21') {

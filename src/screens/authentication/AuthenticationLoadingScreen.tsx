@@ -7,7 +7,9 @@ import User from '../../models/User';
 type Params = {};
 type ScreenProps = {};
 
+// eslint-disable-next-line max-len
 const AuthenticationLoadingScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { navigation } = props;
   const userAuthenticated: User = useSelector((state: any) => state.auth.user);
 
