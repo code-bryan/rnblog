@@ -4,6 +4,7 @@ import { NativeBase } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Post from '../../models/Post';
 import Title from '../atoms/text/Title';
+import ItemImage from '../atoms/images/ItemImage';
 
 interface Props {
   post: Post;
@@ -19,12 +20,6 @@ const PostItemContainer: React.FC<NativeBase.View> = styled.View`
 const PostItemHorizontalImageContainer: React.FC<NativeBase.View> = styled.View`
   box-shadow: 0 3px 2px #ccc;
   height: 180px;
-`;
-
-const PostItemHorizontalImage: React.FC<NativeBase.Image> = styled.Image`
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
 `;
 
 const PostItemHorizontalCategoryTitle: React.FC<NativeBase.Text> = styled.Text`
@@ -47,7 +42,7 @@ const PostItemHorizontal: React.FC<Props> = (props) => {
     <PostItemContainer>
       <TouchableOpacity activeOpacity={0.6} onPress={onPostPressHandler}>
         <PostItemHorizontalImageContainer>
-          <PostItemHorizontalImage source={{ uri: post.image }} />
+          <ItemImage source={{ uri: post.image }} />
         </PostItemHorizontalImageContainer>
         {post.category && (
           <PostItemHorizontalCategoryTitle>{post.category.value}</PostItemHorizontalCategoryTitle>

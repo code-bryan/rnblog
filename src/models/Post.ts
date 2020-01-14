@@ -7,7 +7,7 @@ class Post {
 
   title: string = '';
 
-  body: string = '';
+  body: string[] = [];
 
   author: User = new User();
 
@@ -15,7 +15,7 @@ class Post {
 
   category: Category = new Category();
 
-  likes: number = 0;
+  likes: string[] = [];
 
   comments: Comment[] = [];
 
