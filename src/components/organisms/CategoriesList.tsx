@@ -14,7 +14,7 @@ const CategoryList: React.FC<Props> = (props) => {
   const [selectedCategory, setSelectedCategory] = useState(1);
 
   const onPressHandler = useCallback((id: any) => {
-    setSelectedCategory(1);
+    setSelectedCategory(id);
 
     if (onCategorySelected) {
       onCategorySelected(id);
@@ -29,8 +29,8 @@ const CategoryList: React.FC<Props> = (props) => {
       renderItem={(itemData) => (
         <CategoryPostItem
           category={itemData.item}
-          selectedCategory={selectedCategory}
           onPress={onPressHandler}
+          active={selectedCategory === itemData.item.id}
         />
       )}
     />

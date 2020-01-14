@@ -3,13 +3,16 @@ import {
   Icon, NativeBase,
 } from 'native-base';
 import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
 
-interface IconProps extends NativeBase.Icon{
+interface IconProps extends NativeBase.Icon {
   hasLike: boolean
 }
 
 interface Props {
-  likes: string[];
+  likes: number;
+  onPress: Function;
+  active: boolean;
 }
 
 const Container: React.FC<NativeBase.View> = styled.View`
@@ -31,13 +34,15 @@ const LikesIcon: React.FC<IconProps> = styled(Icon)`
 
 const LikesButton: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { likes } = props;
+  const { likes, onPress, active } = props;
 
   return (
-    <Container>
-      <LikesIcon name="md-heart" type="Ionicons" hasLike={false} />
-      <LikesText>{likes.length}</LikesText>
-    </Container>
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+      <Container>
+        <LikesIcon name="md-heart" type="Ionicons" hasLike={active} />
+        <LikesText>{likes}</LikesText>
+      </Container>
+    </TouchableOpacity>
   );
 };
 

@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { NativeBase } from 'native-base';
 import styled from 'styled-components/native';
+import { useSelector } from 'react-redux';
 import LikesButton from '../atoms/button/LikesButton';
 import CommentsButton from '../atoms/button/CommentsButton';
 import Comment from '../../models/Comment';
+import User from '../../models/User';
+
+interface Props {
+  likes: string[];
+  comments: Comment[];
+  onLikePress?: Function;
+}
 
 const Container: React.FC<NativeBase.View> = styled.View`
   display: flex;
@@ -14,22 +22,24 @@ const Container: React.FC<NativeBase.View> = styled.View`
   margin-left: 7px;
 `;
 
-const PostActions: React.FC = (props) => {
-  const comments: Comment[] = [
-    {
-      id: 1,
-      body: 'Hi',
-      author: 1,
-    },
-  ];
+const PostActions: React.FC<Props> = (props) => {
+  // eslint-disable-next-line react/prop-types
+  const { onLikePress, likes, comments } = props;
+  const user: User = useSelector((state: any) => state.auth.user);
 
-  const likes: string[] = [
-    '1',
-  ];
+  // eslint-disable-next-line react/prop-types
+  const hasLiked = likes.find((userId) => userId === user.uid);
+
+  const onLikePressHandler = useCallback(() => {
+    if (onLikePress) {
+      onLikePress();
+    }
+  }, [likes, user, onLikePress]);
 
   return (
     <Container>
-      <LikesButton likes={likes} />
+      {/* eslint-disable-next-line react/prop-types */}
+      <LikesButton likes={likes.length} onPress={onLikePressHandler} active={!!hasLiked} />
       <CommentsButton comments={comments} />
     </Container>
   );

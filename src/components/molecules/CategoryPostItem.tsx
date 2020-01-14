@@ -7,7 +7,7 @@ import Colors from '../../constants/Colors';
 interface Props {
   category: Category;
   onPress: Function;
-  selectedCategory: number;
+  active: boolean;
 }
 
 interface CategoryPostItemTextProps {
@@ -26,16 +26,19 @@ const CategoryPostItemText: React.FC<CategoryPostItemTextProps> = styled.Text`
 `;
 
 const CategoryPostItem: React.FC<Props> = (props) => {
-  const { category, onPress, selectedCategory } = props;
+  // eslint-disable-next-line react/prop-types
+  const { category, onPress, active } = props;
 
   const onPressHandler = useCallback(() => {
+    // eslint-disable-next-line react/prop-types
     onPress(category.id);
   }, [category, onPress]);
 
   return (
     <CategoryPostItemView>
       <TouchableOpacity activeOpacity={0.6} onPress={onPressHandler}>
-        <CategoryPostItemText active={selectedCategory === category.id}>
+        <CategoryPostItemText active={active}>
+          {/* eslint-disable-next-line react/prop-types */}
           {category.value}
         </CategoryPostItemText>
       </TouchableOpacity>

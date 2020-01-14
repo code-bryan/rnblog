@@ -9,7 +9,7 @@ import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import { getAllPosts, postDetails, setRefreshing } from '../../store/modules/Posts';
+import { getAllPosts, getByCategory, postDetails, setRefreshing } from '../../store/modules/Posts';
 import Title from '../../components/atoms/text/Title';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import Post from '../../models/Post';
@@ -46,6 +46,11 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     navigation.navigate('PostDetails');
   }, [navigation, dispatch, posts]);
 
+  const onSelectedCategoryHandler = useCallback((categoryId: number) => {
+    dispatch(getByCategory(categoryId));
+    dispatch(setRefreshing(true));
+  }, [dispatch]);
+
   useEffect(() => {
     onRefresh();
   }, [onRefresh]);
@@ -64,7 +69,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
           </TouchableOpacity>
         </View>
 
-        <CategoryList categories={categories} />
+        <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
 
         <PostList posts={posts} onSelectedPost={onSelectedPostHandler} />
       </Content>

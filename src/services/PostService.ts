@@ -14,6 +14,21 @@ class PostService {
 
     return posts;
   }
+
+  async AddLike(post: Post): Promise<Post[]> {
+    await firebase.firestore().collection('posts').doc(post.id).set(post);
+    return this.getALLPosts();
+  }
+
+  async getByCategory(categoryId: number): Promise<Post[]> {
+    let allPosts: Post[] = await this.getALLPosts();
+
+    if (categoryId > 1) {
+      allPosts = allPosts.filter((post) => post.category.id === categoryId);
+    }
+
+    return allPosts;
+  }
 }
 
 export default new PostService();
