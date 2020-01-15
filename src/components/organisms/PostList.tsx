@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { FlatList } from 'react-native';
-import PostItemHorizontal from '../molecules/PostItemHorizontal';
+import PostItem from '../molecules/PostItem';
 import Post from '../../models/Post';
 
-interface Props {
+interface Props{
   posts: Post[];
   onSelectedPost: Function;
 }
@@ -23,7 +23,7 @@ const PostList: React.FC<Props> = (props) => {
       data={posts}
       keyExtractor={(item: any) => item.id}
       renderItem={(itemData) => (
-        <PostItemHorizontal post={itemData.item} onPress={onSelectedPostHandler} />
+        <PostItem post={itemData.item} onPress={onSelectedPostHandler} />
       )}
     />
   );

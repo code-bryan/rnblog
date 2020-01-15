@@ -52,13 +52,14 @@ const PostScreen: NavigationScreenComponent<Params, ScreenProps> = (props) => {
   );
 };
 
-PostScreen.navigationOptions = {
+PostScreen.navigationOptions = (navData) => ({
   headerTitle: '',
   headerTransparent: true,
   headerBackTitleVisible: false,
-  headerBackTitleStyle: {
-    marginLeft: 20,
+  headerTintColor: '#000',
+  headerLeftContainerStyle: {
+    marginLeft: 10,
   },
-};
+});
 
 export default PostScreen;

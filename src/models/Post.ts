@@ -13,6 +13,8 @@ class Post {
 
   publishDate: string = '';
 
+  createdAt: string = '';
+
   category: Category = new Category();
 
   likes: string[] = [];

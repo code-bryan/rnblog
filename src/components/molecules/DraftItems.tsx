@@ -13,6 +13,7 @@ const PostViewVerticalContainer: React.FC<NativeBase.View> = styled.View`
   flex-direction: row;
   margin: 0 20px;
   justify-content: space-between;
+  align-items: center;
 `;
 const PostItemVerticalImage: React.FC<NativeBase.Image> = styled.Image`
   width:  100px;
@@ -31,7 +32,7 @@ const PostItemVerticalAuthor: React.FC<NativeBase.Text> = styled.Text`
   margin-top: 15px;
 `;
 
-const PostItemVertical: React.FC<Props> = (props) => {
+const DraftItems: React.FC<Props> = (props) => {
   const { post, onPress } = props;
 
   const onPressHandler = useCallback(() => {
@@ -57,4 +58,4 @@ const PostItemVertical: React.FC<Props> = (props) => {
   );
 };
 
-export default PostItemVertical;
+export default DraftItems;

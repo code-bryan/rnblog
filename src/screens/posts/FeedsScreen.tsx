@@ -15,17 +15,14 @@ import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton
 import Post from '../../models/Post';
 import CategoryList from '../../components/organisms/CategoriesList';
 import PostList from '../../components/organisms/PostList';
+import HeaderMenuButton from "../../components/molecules/HeaderMenuButton";
+import SearchHeader from "../../components/molecules/SearchHeader";
+import NoContentListMessage from "../../components/atoms/NoContentListMessage";
 
 type Params = {};
 type ScreenProps = {};
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -43,8 +40,8 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   const dispatch = useDispatch();
 
   const onRefresh = useCallback(() => {
-    dispatch(getAllPosts());
     dispatch(setRefreshing(true));
+    dispatch(getAllPosts());
   }, [dispatch]);
 
   const onSelectedPostHandler = useCallback((selectedPost: Post) => {
@@ -53,8 +50,8 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   }, [navigation, dispatch, posts]);
 
   const onSelectedCategoryHandler = useCallback((categoryId: number) => {
-    dispatch(getAllPosts(categoryId));
     dispatch(setRefreshing(true));
+    dispatch(getAllPosts(categoryId));
   }, [dispatch]);
 
   useEffect(() => {
@@ -68,19 +65,12 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         refreshing={refreshing}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <View style={styles.headerContainer}>
-          <Title>Discover News</Title>
-          <TouchableOpacity activeOpacity={0.6}>
-            <Icon type="Ionicons" fontSize={20} name={Platform.OS === 'android' ? 'md-search' : 'ios-search'} />
-          </TouchableOpacity>
-        </View>
+        <SearchHeader>Discover News</SearchHeader>
 
         <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
 
         {posts.length <= 0 && (
-          <View style={styles.errorContainer}>
-            <Title>There are not post available</Title>
-          </View>
+          <NoContentListMessage>There are not post available</NoContentListMessage>
         )}
 
         <PostList posts={posts} onSelectedPost={onSelectedPostHandler} />
@@ -93,16 +83,7 @@ FeedsScreen.navigationOptions = (navData) => ({
   headerTitle: '',
   headerTransparent: true,
   headerLeft: () => (
-    <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-      <Item
-        title="Menu"
-        iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
-        buttonStyle={{ marginLeft: 20 }}
-        onPress={() => {
-          navData.navigation.toggleDrawer();
-        }}
-      />
-    </HeaderButtons>
+    <HeaderMenuButton navigation={navData.navigation} />
   ),
 });
 

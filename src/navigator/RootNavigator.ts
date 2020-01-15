@@ -3,9 +3,11 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import AuthStack from './stacks/AuthStack';
 import AuthenticationLoadingScreen from '../screens/authentication/AuthenticationLoadingScreen';
 import PostStack from './stacks/PostStack';
+import DraftStack from './stacks/DraftStack';
 
 const DrawerStack = createDrawerNavigator({
   Post: PostStack,
+  Draft: DraftStack,
 }, {
   initialRouteName: 'Post',
 });

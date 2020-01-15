@@ -6,7 +6,7 @@ const CustomHeaderButton: React.FC<HeaderButtonProps> = (props) => (
   <HeaderButton
     {...props}
     IconComponent={Ionicons}
-    iconSize={23}
+    iconSize={30}
   />
 );
 

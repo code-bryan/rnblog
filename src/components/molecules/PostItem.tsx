@@ -30,7 +30,7 @@ const PostItemHorizontalCategoryTitle: React.FC<NativeBase.Text> = styled.Text`
 `;
 
 
-const PostItemHorizontal: React.FC<Props> = (props) => {
+const PostItem: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
   const { post, onPress } = props;
 
@@ -53,4 +53,4 @@ const PostItemHorizontal: React.FC<Props> = (props) => {
   );
 };
 
-export default PostItemHorizontal;
+export default PostItem;
