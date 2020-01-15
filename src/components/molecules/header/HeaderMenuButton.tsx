@@ -1,4 +1,4 @@
-import CustomHeaderButton from "../atoms/button/CustomHeaderButton";
+import CustomHeaderButton from "../../atoms/button/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Platform } from "react-native";
 import React from "react";

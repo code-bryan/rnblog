@@ -1,10 +1,10 @@
-import { Platform, TouchableOpacity, View } from 'react-native';
-import { Icon, NativeBase } from 'native-base';
+import { Platform, TouchableOpacity } from 'react-native';
+import { Icon, NativeBase, View } from 'native-base';
 import React from 'react';
 import styled from 'styled-components/native';
-import Title from '../atoms/text/Title';
+import Title from '../../atoms/text/Title';
 
-const HeaderContainer: React.FC<NativeBase.View> = styled.View`
+const HeaderContainer: React.FC<NativeBase.View> = styled(View)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Container, Content, Header } from 'native-base';
 import { NavigationScreenComponent } from 'react-navigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,7 @@ import Post from '../../models/Post';
 import Title from '../../components/atoms/text/Title';
 import PostActions from '../../components/molecules/PostActions';
 import ItemImage from '../../components/atoms/images/ItemImage';
-import TextContainer from '../../components/molecules/TextContainer';
+import EditorTextContainer from '../../components/molecules/editor/EditorTextContainer';
 import PostUserInfo from '../../components/molecules/PostUserInfo';
 import User from '../../models/User';
 import { addLike } from '../../store/modules/Posts';
@@ -43,10 +43,10 @@ const PostScreen: NavigationScreenComponent<Params, ScreenProps> = (props) => {
       <Header transparent />
       <Content style={styles.content}>
         <Title>{post.title}</Title>
-        <PostUserInfo author={post.author} />
+        <PostUserInfo author={post.author} publishDate={post.publishDate} />
         <PostActions likes={post.likes} comments={post.comments} onLikePress={onLikeHandler} />
         <ItemImage source={{ uri: post.image }} height={200} />
-        <TextContainer body={post.body} />
+        <EditorTextContainer body={post.body} />
       </Content>
     </Container>
   );

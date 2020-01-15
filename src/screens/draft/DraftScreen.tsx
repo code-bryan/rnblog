@@ -7,11 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { FlatList, Platform, StyleSheet } from 'react-native';
 import User from '../../models/User';
-import HeaderMenuButton from '../../components/molecules/HeaderMenuButton';
+import HeaderMenuButton from '../../components/molecules/header/HeaderMenuButton';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import Post from '../../models/Post';
 import DraftItems from '../../components/molecules/DraftItems';
-import SearchHeader from '../../components/molecules/SearchHeader';
+import SearchHeader from '../../components/molecules/header/SearchHeader';
 import { getAllDrafts } from '../../store/modules/Drafts';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
 
@@ -71,7 +71,7 @@ DraftScreen.navigationOptions = (navData) => ({
         iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'}
         buttonStyle={{ marginRight: 20 }}
         onPress={() => {
-          navData.navigation.navigate('AddDraft');
+          navData.navigation.navigate('ManageDraft');
         }}
       />
     </HeaderButtons>

@@ -9,7 +9,7 @@ const DrawerStack = createDrawerNavigator({
   Post: PostStack,
   Draft: DraftStack,
 }, {
-  initialRouteName: 'Post',
+  initialRouteName: 'Draft',
 });
 
 const switchNavigation = createSwitchNavigator({

@@ -1,11 +1,11 @@
 import { createStackNavigator } from 'react-navigation-stack';
 import DefaultStackNavigationOptions from '../DefaultStackNavigationOptions';
 import DraftScreen from '../../screens/draft/DraftScreen';
-import AddDraftScreen from "../../screens/draft/AddDraftScreen";
+import ManageDraftScreen from "../../screens/draft/ManageDraftScreen";
 
 const DraftStack = createStackNavigator({
   Draft: DraftScreen,
-  AddDraft: AddDraftScreen,
+  ManageDraft: ManageDraftScreen,
 }, {
   initialRouteName: 'Draft',
   defaultNavigationOptions: {
