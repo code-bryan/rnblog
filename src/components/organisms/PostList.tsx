@@ -6,11 +6,15 @@ import Post from '../../models/Post';
 interface Props{
   posts: Post[];
   onSelectedPost: Function;
+  refreshing?: boolean;
+  refreshControl?: any
 }
 
 const PostList: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { posts, onSelectedPost } = props;
+  const {
+    posts, onSelectedPost, refreshing, refreshControl,
+  } = props;
 
   const onSelectedPostHandler = useCallback((id: string) => {
     // eslint-disable-next-line react/prop-types
@@ -22,6 +26,8 @@ const PostList: React.FC<Props> = (props) => {
     <FlatList
       data={posts}
       keyExtractor={(item: any) => item.id}
+      refreshing={refreshing}
+      refreshControl={refreshControl}
       renderItem={(itemData) => (
         <PostItem post={itemData.item} onPress={onSelectedPostHandler} />
       )}

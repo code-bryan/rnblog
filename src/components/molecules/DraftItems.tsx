@@ -32,6 +32,10 @@ const PostItemVerticalAuthor: React.FC<NativeBase.Text> = styled.Text`
   margin-top: 15px;
 `;
 
+const Touchable = styled(TouchableOpacity)`
+  margin-bottom: 20px;
+`;
+
 const DraftItems: React.FC<Props> = (props) => {
   const { post, onPress } = props;
 
@@ -40,7 +44,7 @@ const DraftItems: React.FC<Props> = (props) => {
   }, [post, onPress]);
 
   return (
-    <TouchableOpacity activeOpacity={0.6} onPress={onPressHandler}>
+    <Touchable activeOpacity={0.6} onPress={onPressHandler}>
       <PostViewVerticalContainer>
         <PostItemVerticalTextContainer>
           <PostItemVerticalTitle>{post.title}</PostItemVerticalTitle>
@@ -54,7 +58,7 @@ const DraftItems: React.FC<Props> = (props) => {
         </PostItemVerticalTextContainer>
         <PostItemVerticalImage source={{ uri: post.image }} />
       </PostViewVerticalContainer>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

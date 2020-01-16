@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { NativeBase } from 'native-base';
+import React from 'react';
 
 interface Props extends NativeBase.Text{
   fontSize?: number;

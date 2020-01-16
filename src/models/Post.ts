@@ -22,6 +22,8 @@ class Post {
   comments: Comment[] = [];
 
   image: string = '';
+
+  commentsAvailable: boolean = true;
 }
 
 export default Post;

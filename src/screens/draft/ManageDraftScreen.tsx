@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Container, Content, Header, Input, NativeBase, View,
+  Container, Content, Header, NativeBase,
 } from 'native-base';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
+import { NavigationEvents } from 'react-navigation';
 import User from '../../models/User';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import ManageDraftForm from '../../components/organisms/ManageDraftForm';
 import Post from '../../models/Post';
-import { ActionReducer } from "../../types/ActionReducer";
-import { NavigationEvents } from "react-navigation";
+import { ActionReducer } from '../../types/ActionReducer';
+import ToastService from '../../services/ToastService';
+import { saveDraft } from "../../store/modules/Drafts";
 
 interface ReducerValue {
   form: Post,
@@ -39,31 +41,58 @@ const FormReducer = (state: ReducerValue, action: Partial<ActionReducer>) => {
   }
 };
 
-
-
 const ContentStyled: React.FC<NativeBase.Content> = styled(Content)`
   margin-left: 20px;
   margin-right: 20px;
 `;
 
 const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
+  const { navigation } = props;
   const user: User = useSelector((state: any) => state.auth.user);
   INITIAL_STATE.form.author = user;
   const [formState, formDispatch] = useReducer(FormReducer, INITIAL_STATE);
+  const dispatch = useDispatch();
 
   const onChangeHandler = useCallback((updatedPost: Post) => {
-    const action: ActionReducer = { type: CHANGE_FORM, payload: updatedPost, };
+    const action: ActionReducer = { type: CHANGE_FORM, payload: updatedPost };
     formDispatch(action);
   }, [formDispatch]);
 
   const onWillFocusHandler = useCallback(() => {
-    const action: ActionReducer = { type: CLEAN_FORM, payload: INITIAL_STATE, };
+    const action: ActionReducer = { type: CLEAN_FORM, payload: INITIAL_STATE };
     formDispatch(action);
   }, [formDispatch]);
 
+  const onSaveDraft = useCallback(() => {
+    const { form } = formState as ReducerValue;
+    let valid = true;
+
+    // eslint-disable-next-line no-useless-escape
+    const urlRegex = /^(https:\/\/)?[a-z0-9]+([\-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+
+    if (form.title.length <= 0) {
+      valid = false;
+    }
+
+    if (!urlRegex.test(form.image)) {
+      valid = false;
+    }
+
+    if (form.category.id <= 0) {
+      valid = false;
+    }
+
+    if (valid) {
+      dispatch(saveDraft(form));
+      navigation.goBack();
+    } else {
+      ToastService.closeLabelToast('Form invalid you must add the title, image url and category');
+    }
+  }, [formState, dispatch]);
+
   useEffect(() => {
-    console.log(formState);
-  }, [formState]);
+    navigation.setParams({ onSaveDraft });
+  }, []);
 
   return (
     <Container>
@@ -86,7 +115,8 @@ ManageDraftScreen.navigationOptions = (navData) => ({
         iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
         buttonStyle={{ marginRight: 20 }}
         onPress={() => {
-          navData.navigation.navigate('AddDraft');
+          const onSaveDraft: Function = navData.navigation.getParam('onSaveDraft');
+          onSaveDraft();
         }}
       />
     </HeaderButtons>

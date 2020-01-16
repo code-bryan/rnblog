@@ -20,7 +20,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   const { navigation } = props;
   const categories = useSelector((state: any) => state.posts.categories);
   const posts: Post[] = useSelector((state: any) => state.posts.posts);
-  const refreshing = useSelector((state: any) => state.posts.refreshing);
+  const refreshing: boolean = useSelector((state: any) => state.posts.refreshing);
   const dispatch = useDispatch();
 
   const onRefresh = useCallback(() => {
@@ -45,10 +45,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   return (
     <Container>
       <Header transparent />
-      <Content
-        refreshing={refreshing}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
+      <Content>
         <SearchHeader>Discover News</SearchHeader>
 
         <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
@@ -57,7 +54,12 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
           <NoContentListMessage>There are not post available</NoContentListMessage>
         )}
 
-        <PostList posts={posts} onSelectedPost={onSelectedPostHandler} />
+        <PostList
+          posts={posts}
+          onSelectedPost={onSelectedPostHandler}
+          refreshing={refreshing}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        />
       </Content>
     </Container>
   );

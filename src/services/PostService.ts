@@ -10,6 +10,11 @@ class PostService {
     postsFromFirestore.docs.forEach((item) => {
       const post: Post = item.data() as Post;
       post.id = item.id;
+
+      if (post.publishDate.length <= 0) {
+        return;
+      }
+
       allPosts.push(post);
     });
 
