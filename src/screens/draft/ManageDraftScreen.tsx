@@ -7,7 +7,7 @@ import {
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { NavigationEvents } from 'react-navigation';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
@@ -15,7 +15,7 @@ import ManageDraftForm from '../../components/organisms/ManageDraftForm';
 import Post from '../../models/Post';
 import { ActionReducer } from '../../types/ActionReducer';
 import ToastService from '../../services/ToastService';
-import { editDraft, saveDraft } from '../../store/modules/Drafts';
+import { editDraft, publishDraft, saveDraft } from '../../store/modules/Drafts';
 
 interface ReducerValue {
   form: Post,
@@ -93,8 +93,24 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
     }
   }, [formState, dispatch, editMode]);
 
+  const onPublish = useCallback(() => {
+    Alert.alert('Publish article', 'Are you sure to publish this article', [
+      {
+        text: 'Yes',
+        onPress: () => {
+          dispatch(publishDraft(formState.form));
+          navigation.goBack();
+        },
+      },
+      {
+        text: 'No',
+      },
+    ]);
+  }, [formState]);
+
   useEffect(() => {
     navigation.setParams({ onSaveDraft });
+    navigation.setParams({ onPublish });
   }, []);
 
   return (
@@ -113,6 +129,18 @@ ManageDraftScreen.navigationOptions = (navData) => ({
   headerTransparent: true,
   headerRight: () => (
     <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+      {navData.navigation.getParam('edit') && (
+        <Item
+          title="Send"
+          iconName={Platform.OS === 'android' ? 'md-send' : 'ios-send'}
+          buttonStyle={{ marginRight: 20 }}
+          onPress={() => {
+            const onPublish: Function = navData.navigation.getParam('onPublish');
+            onPublish();
+          }}
+        />
+      )}
+
       <Item
         title="Save"
         iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}

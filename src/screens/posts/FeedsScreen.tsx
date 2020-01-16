@@ -45,7 +45,10 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   return (
     <Container>
       <Header transparent />
-      <Content>
+      <Content
+        refreshing={refreshing}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <SearchHeader>Discover News</SearchHeader>
 
         <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
@@ -57,8 +60,6 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         <PostList
           posts={posts}
           onSelectedPost={onSelectedPostHandler}
-          refreshing={refreshing}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </Content>
     </Container>

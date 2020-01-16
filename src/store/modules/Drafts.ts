@@ -95,6 +95,15 @@ export const selectDraft = (post: Post) => (dispatch: any) => dispatch(
   { type: SELECT_DRAFT, payload: post },
 );
 
+export const publishDraft = (post: Post) => async (dispatch: any) => {
+  try {
+    const drafts = await DraftsService.publishDraft(post);
+    dispatch({ type: SAVE_DRAFTS, payload: drafts });
+  } catch (e) {
+    dispatch({ type: DRAFT_ERROR, payload: e.message });
+  }
+};
+
 export default {
   Reducer,
 };

@@ -13,9 +13,14 @@ class DraftsService {
       const draft: Post = item.data() as Post;
       draft.id = item.id;
 
-      if (draft.author.uid !== userId && draft.publishDate.length > 0) {
+      if (draft.author.uid !== userId) {
         return;
       }
+
+      if (draft.publishDate.length > 0) {
+        return;
+      }
+
       allDrafts.push(draft);
     });
 
@@ -31,7 +36,13 @@ class DraftsService {
 
   async editDraft(post: Post): Promise<Post[]> {
     // eslint-disable-next-line no-param-reassign
-    post.createdAt = moment().format(DateFormats.database);
+    await firebase.firestore().collection('posts').doc(post.id).update(post);
+    return this.getAllDrafts(post.author.uid);
+  }
+
+  async publishDraft(post: Post): Promise<Post[]> {
+    // eslint-disable-next-line no-param-reassign
+    post.publishDate = moment().format(DateFormats.database);
     await firebase.firestore().collection('posts').doc(post.id).update(post);
     return this.getAllDrafts(post.author.uid);
   }
