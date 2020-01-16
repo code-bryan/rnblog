@@ -21,7 +21,7 @@ const InputTextarea: React.FC<Props> = styled(Textarea)`
 const InputTitle: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
   const { onChangeTextarea } = props;
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(props.defaultValue || '');
   const [row, setRow] = useState(2);
 
   const onTextAreaChangeHandler = useCallback((text: string) => {
@@ -43,7 +43,6 @@ const InputTitle: React.FC<Props> = (props) => {
         bordered
         underline
         value={value}
-        defaultValue={props.defaultValue}
         placeholder={props.placeholder}
         fontSize={props.fontSize}
         color={props.color}

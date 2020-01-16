@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  Content,
   Form, Icon, Input, Item, NativeBase, Picker, Radio, Text, View,
 } from 'native-base';
 import styled from 'styled-components/native';

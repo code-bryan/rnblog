@@ -28,6 +28,13 @@ class DraftsService {
     await firebase.firestore().collection('posts').add({ ...post });
     return this.getAllDrafts(post.author.uid);
   }
+
+  async editDraft(post: Post): Promise<Post[]> {
+    // eslint-disable-next-line no-param-reassign
+    post.createdAt = moment().format(DateFormats.database);
+    await firebase.firestore().collection('posts').doc(post.id).update(post);
+    return this.getAllDrafts(post.author.uid);
+  }
 }
 
 export default new DraftsService();

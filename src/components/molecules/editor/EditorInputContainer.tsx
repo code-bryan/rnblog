@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Button, NativeBase, Text, View,
+  Button, Icon, NativeBase, Text, View,
 } from 'native-base';
 import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
@@ -34,9 +34,17 @@ const InputButton: React.FC<NativeBase.Button> = styled(Button)`
   margin-right: 10px;
 `;
 
+const CloseIcon: React.FC<NativeBase.Icon> = styled(Icon)`
+  margin-right: 10px;
+  margin-bottom: 0;
+  align-self: flex-end;
+`;
+
 const EditorInputContainer: React.FC<Props> = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { body, onEditorChange } = props;
   const [content, setContent] = useState([]);
+  const [run, setRun] = useState(true);
 
   const onSetTitle = useCallback(() => {
     const newContent = new Content();
@@ -61,7 +69,35 @@ const EditorInputContainer: React.FC<Props> = (props) => {
     onEditorChange(newBody);
   }, [content, setContent, onEditorChange]);
 
-  useEffect(() => {}, [body]);
+  const onDeleteContent = useCallback((index: number) => {
+    setContent((currentContent) => {
+      const newBody: string[] = [];
+
+      if (currentContent.length > 1) {
+        const newContent = currentContent.filter((item: any, i:number) => index !== i);
+        newContent.map((item: Content) => newBody.push(`${item.type}||${item.value}`));
+        onEditorChange(newBody);
+        return newContent;
+      }
+
+      onEditorChange(newBody);
+      return [];
+    });
+  }, [setContent, content]);
+
+  useEffect(() => {
+    if (run && body.length > 0) {
+      body.map((item) => {
+        const [type, value] = item.split('||');
+        const editContent = new Content();
+        editContent.type = type;
+        editContent.value = value;
+        setContent((currentCat) => [...currentCat, editContent]);
+      });
+
+      setRun(false);
+    }
+  }, [body, run, setRun]);
 
   return (
     <Container>
@@ -81,11 +117,28 @@ const EditorInputContainer: React.FC<Props> = (props) => {
         {content.length > 0 && content.map((item: Content, index: number) => {
           if (item.type === 'title') {
             return (
-              <InputTitle key={index} placeholder="Title" onChangeTextarea={onChangTextareaHandler.bind(this, index)} />
+              <Container key={index}>
+                <CloseIcon name="close" fontSize={23} onPress={onDeleteContent.bind(this, index)} />
+                <InputTitle
+                  placeholder="Title"
+                  defaultValue={item.value}
+                  onChangeTextarea={onChangTextareaHandler.bind(this, index)}
+                />
+              </Container>
             );
           }
 
-          return <InputMutedText key={index} placeholder="Content" onChangeTextarea={onChangTextareaHandler.bind(this, index)} />;
+          return (
+            <Container key={index}>
+              <CloseIcon name="close" fontSize={23} onPress={onDeleteContent.bind(this, index)} />
+              <InputMutedText
+                style={{ marginTop: 0 }}
+                placeholder="Content"
+                defaultValue={item.value}
+                onChangeTextarea={onChangTextareaHandler.bind(this, index)}
+              />
+            </Container>
+          );
         })}
       </TextContainer>
     </Container>

@@ -14,7 +14,9 @@ import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton
 import Post from '../../models/Post';
 import DraftItems from '../../components/molecules/DraftItems';
 import SearchHeader from '../../components/molecules/header/SearchHeader';
-import { cleanDraftError, getAllDrafts, refreshDrafts } from '../../store/modules/Drafts';
+import {
+  cleanDraftError, getAllDrafts, refreshDrafts, selectDraft,
+} from '../../store/modules/Drafts';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
 import ToastService from '../../services/ToastService';
 
@@ -25,6 +27,8 @@ const styles = StyleSheet.create({
 });
 
 const DraftScreen: NavigationStackScreenComponent = (props) => {
+  // eslint-disable-next-line react/prop-types
+  const { navigation } = props;
   const user: User = useSelector((state: any) => state.auth.user);
   const drafts: Post[] = useSelector((state: any) => state.drafts.drafts);
   const refreshing: boolean = useSelector((state: any) => state.drafts.refreshing);
@@ -36,18 +40,27 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
     dispatch(getAllDrafts(user.uid));
   }, [dispatch, user]);
 
+  const onPostSelected = useCallback((id: string) => {
+    const postSelected: Post = drafts.find((post) => post.id === id) as Post;
+    dispatch(selectDraft(postSelected));
+    navigation.navigate({
+      routeName: 'ManageDraft',
+      params: {
+        edit: true,
+      },
+    });
+  }, [drafts, navigation]);
+
   useEffect(() => {
     dispatch(getAllDrafts(user.uid));
   }, [dispatch, user]);
 
   useEffect(() => {
-    if (!error) {
-      return;
+    if (error) {
+      ToastService.closeLabelToast(error, () => {
+        dispatch(cleanDraftError());
+      });
     }
-
-    ToastService.closeLabelToast(error, () => {
-      dispatch(cleanDraftError());
-    });
   }, [error, dispatch]);
 
   return (
@@ -55,6 +68,8 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
       <Header transparent />
       <Content
         padder
+        refreshing={refreshing}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <SearchHeader>My Drafts</SearchHeader>
 
@@ -65,15 +80,11 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
         <FlatList
           data={drafts}
           style={styles.list}
-          refreshing={refreshing}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           keyExtractor={(item) => item.id}
           renderItem={(item) => (
             <DraftItems
               post={item.item}
-              onPress={(id: string) => {
-                console.log(id);
-              }}
+              onPress={onPostSelected}
             />
           )}
         />
@@ -95,7 +106,12 @@ DraftScreen.navigationOptions = (navData) => ({
         iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'}
         buttonStyle={{ marginRight: 20 }}
         onPress={() => {
-          navData.navigation.navigate('ManageDraft');
+          navData.navigation.navigate({
+            routeName: 'ManageDraft',
+            params: {
+              edit: false,
+            },
+          });
         }}
       />
     </HeaderButtons>

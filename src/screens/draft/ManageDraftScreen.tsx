@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, {
+  useCallback, useEffect, useReducer, useState,
+} from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
   Container, Content, Header, NativeBase,
@@ -8,13 +10,12 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { NavigationEvents } from 'react-navigation';
-import User from '../../models/User';
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import ManageDraftForm from '../../components/organisms/ManageDraftForm';
 import Post from '../../models/Post';
 import { ActionReducer } from '../../types/ActionReducer';
 import ToastService from '../../services/ToastService';
-import { saveDraft } from "../../store/modules/Drafts";
+import { editDraft, saveDraft } from '../../store/modules/Drafts';
 
 interface ReducerValue {
   form: Post,
@@ -47,9 +48,11 @@ const ContentStyled: React.FC<NativeBase.Content> = styled(Content)`
 `;
 
 const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
+  // eslint-disable-next-line react/prop-types
   const { navigation } = props;
-  const user: User = useSelector((state: any) => state.auth.user);
-  INITIAL_STATE.form.author = user;
+  const [editMode] = useState(navigation.getParam('edit'));
+  INITIAL_STATE.form = useSelector((state: any) => state.drafts.selectedDraft);
+  INITIAL_STATE.form.author = useSelector((state: any) => state.auth.user);
   const [formState, formDispatch] = useReducer(FormReducer, INITIAL_STATE);
   const dispatch = useDispatch();
 
@@ -83,12 +86,12 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
     }
 
     if (valid) {
-      dispatch(saveDraft(form));
+      dispatch((editMode) ? editDraft(form) : saveDraft(form));
       navigation.goBack();
     } else {
       ToastService.closeLabelToast('Form invalid you must add the title, image url and category');
     }
-  }, [formState, dispatch]);
+  }, [formState, dispatch, editMode]);
 
   useEffect(() => {
     navigation.setParams({ onSaveDraft });
