@@ -4,12 +4,14 @@ import AuthStack from './stacks/AuthStack';
 import AuthenticationLoadingScreen from '../screens/authentication/AuthenticationLoadingScreen';
 import PostStack from './stacks/PostStack';
 import DraftStack from './stacks/DraftStack';
+import AppMenu from '../components/organisms/AppMenu';
 
 const DrawerStack = createDrawerNavigator({
-  Post: PostStack,
+  Feeds: PostStack,
   Draft: DraftStack,
 }, {
-  initialRouteName: 'Post',
+  initialRouteName: 'Feeds',
+  contentComponent: AppMenu,
 });
 
 const switchNavigation = createSwitchNavigator({

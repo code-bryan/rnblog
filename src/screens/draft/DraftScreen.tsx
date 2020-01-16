@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Container, Content, Header, View,
+  Container, Header, View,
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -14,7 +14,7 @@ import HeaderMenuButton from '../../components/molecules/header/HeaderMenuButton
 import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton';
 import Post from '../../models/Post';
 import DraftItems from '../../components/molecules/DraftItems';
-import SearchHeader from '../../components/molecules/header/SearchHeader';
+import SearchHeader from '../../components/organisms/SearchHeader';
 import {
   cleanDraftError, deleteDraft, getAllDrafts, refreshDrafts, selectDraft,
 } from '../../store/modules/Drafts';
@@ -34,6 +34,7 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
   const drafts: Post[] = useSelector((state: any) => state.drafts.drafts);
   const refreshing: boolean = useSelector((state: any) => state.drafts.refreshing);
   const error: string = useSelector((state: any) => state.drafts.errors);
+  const [availableDraft, setDrafts] = useState(drafts);
   const dispatch = useDispatch();
 
   const onRefresh = useCallback(() => {
@@ -67,6 +68,10 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
     ]);
   }, [drafts, dispatch]);
 
+  const onSearchHandler = useCallback((filteredDrafts: Post[]) => {
+    setDrafts(filteredDrafts);
+  }, [setDrafts]);
+
   useEffect(() => {
     if (error) {
       ToastService.closeLabelToast(error, () => {
@@ -75,22 +80,18 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
     }
   }, [error, dispatch]);
 
-  useEffect(() => {
-    console.log(drafts);
-  }, [drafts]);
-
   return (
     <Container>
       <Header transparent />
       <View style={{ flex: 1 }}>
-        <SearchHeader>My Drafts</SearchHeader>
+        <SearchHeader items={drafts} onSearch={onSearchHandler}>My Drafts</SearchHeader>
 
         {drafts.length <= 0 && (
           <NoContentListMessage>You do not have any draft</NoContentListMessage>
         ) }
 
         <FlatList
-          data={drafts}
+          data={availableDraft}
           style={styles.list}
           keyExtractor={(item) => item.id}
           refreshing={refreshing}

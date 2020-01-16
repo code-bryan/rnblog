@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Content, Header, View } from 'native-base';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
@@ -9,7 +9,7 @@ import Post from '../../models/Post';
 import CategoryList from '../../components/organisms/CategoriesList';
 import PostList from '../../components/organisms/PostList';
 import HeaderMenuButton from '../../components/molecules/header/HeaderMenuButton';
-import SearchHeader from '../../components/molecules/header/SearchHeader';
+import SearchHeader from '../../components/organisms/SearchHeader';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
 
 type Params = {};
@@ -21,6 +21,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   const categories = useSelector((state: any) => state.posts.categories);
   const posts: Post[] = useSelector((state: any) => state.posts.posts);
   const refreshing: boolean = useSelector((state: any) => state.posts.refreshing);
+  const [visiblePost, setVisiblePost] = useState(posts);
   const dispatch = useDispatch();
 
   const onRefresh = useCallback(() => {
@@ -38,6 +39,10 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     dispatch(getAllPosts(categoryId));
   }, [dispatch]);
 
+  const onSearchHandler = useCallback((filteredPost: Post[]) => {
+    setVisiblePost(filteredPost);
+  }, [setVisiblePost]);
+
   useEffect(() => {
     onRefresh();
   }, [onRefresh]);
@@ -46,7 +51,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
     <Container>
       <Header transparent />
       <View style={{ flex: 1 }}>
-        <SearchHeader>Discover News</SearchHeader>
+        <SearchHeader items={posts} onSearch={onSearchHandler}>Discover News</SearchHeader>
 
         <View>
           <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
@@ -57,7 +62,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         )}
 
         <PostList
-          posts={posts}
+          posts={visiblePost}
           onSelectedPost={onSelectedPostHandler}
           refreshing={refreshing}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

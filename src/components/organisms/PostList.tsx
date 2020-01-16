@@ -25,11 +25,9 @@ const PostList: React.FC<Props> = (props) => {
   return (
     <FlatList
       data={posts}
-      style={{ flex: 1 }}
       keyExtractor={(item: any) => item.id}
       refreshing={refreshing}
-      contentInsetAdjustmentBehavior="automatic"
-      nestedScrollEnabled
+      refreshControl={refreshControl}
       renderItem={(itemData) => (
         <PostItem post={itemData.item} onPress={onSelectedPostHandler} />
       )}

@@ -15,11 +15,13 @@ const PostItemContainer: React.FC<NativeBase.View> = styled.View`
   width: 91%;
   margin: 0 20px;
   padding-bottom: 20px;
+  background-color: #fff;
 `;
 
 const PostItemHorizontalImageContainer: React.FC<NativeBase.View> = styled.View`
   box-shadow: 0 3px 2px #ccc;
   height: 180px;
+  background-color: #fff;
 `;
 
 const PostItemHorizontalCategoryTitle: React.FC<NativeBase.Text> = styled.Text`
