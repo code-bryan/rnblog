@@ -7,6 +7,7 @@ import Post from '../../models/Post';
 interface Props {
   post: Post;
   onPress: Function;
+  onLongPress?: Function;
 }
 
 const PostViewVerticalContainer: React.FC<NativeBase.View> = styled.View`
@@ -37,14 +38,20 @@ const Touchable = styled(TouchableOpacity)`
 `;
 
 const DraftItems: React.FC<Props> = (props) => {
-  const { post, onPress } = props;
+  const { post, onPress, onLongPress } = props;
 
   const onPressHandler = useCallback(() => {
     onPress(post.id);
   }, [post, onPress]);
 
+  const onLongPressHandler = useCallback(() => {
+    if (onLongPress) {
+      onLongPress(post.id);
+    }
+  }, [post, onLongPress]);
+
   return (
-    <Touchable activeOpacity={0.6} onPress={onPressHandler}>
+    <Touchable activeOpacity={0.6} onPress={onPressHandler} onLongPress={onLongPressHandler}>
       <PostViewVerticalContainer>
         <PostItemVerticalTextContainer>
           <PostItemVerticalTitle>{post.title}</PostItemVerticalTitle>

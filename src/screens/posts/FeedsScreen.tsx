@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Container, Content, Header } from 'native-base';
+import { Container, Content, Header, View } from 'native-base';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,13 +45,12 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   return (
     <Container>
       <Header transparent />
-      <Content
-        refreshing={refreshing}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
+      <View style={{ flex: 1 }}>
         <SearchHeader>Discover News</SearchHeader>
 
-        <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
+        <View>
+          <CategoryList categories={categories} onCategorySelected={onSelectedCategoryHandler} />
+        </View>
 
         {posts.length <= 0 && (
           <NoContentListMessage>There are not post available</NoContentListMessage>
@@ -60,8 +59,10 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
         <PostList
           posts={posts}
           onSelectedPost={onSelectedPostHandler}
+          refreshing={refreshing}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
-      </Content>
+      </View>
     </Container>
   );
 };

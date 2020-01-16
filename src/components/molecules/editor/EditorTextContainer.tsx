@@ -12,6 +12,10 @@ const Container: React.FC<NativeBase.View> = styled(View)`
   margin-top: 20px;
 `;
 
+const CustomTitle = styled(Title)`
+  margin-bottom: 10px;
+`;
+
 const TextContainer: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
   const { body } = props;
@@ -20,7 +24,7 @@ const TextContainer: React.FC<Props> = (props) => {
     const [type, content] = item.split('||');
 
     if (type === 'title') {
-      return <Title fontSize={17} key={index}>{content}</Title>;
+      return <CustomTitle fontSize={18} key={index}>{content}</CustomTitle>;
     }
     return <MutedText key={index}>{content}</MutedText>;
   }, [body]);

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, SafeAreaView } from 'react-native';
 import PostItem from '../molecules/PostItem';
 import Post from '../../models/Post';
 
@@ -25,9 +25,11 @@ const PostList: React.FC<Props> = (props) => {
   return (
     <FlatList
       data={posts}
+      style={{ flex: 1 }}
       keyExtractor={(item: any) => item.id}
       refreshing={refreshing}
-      refreshControl={refreshControl}
+      contentInsetAdjustmentBehavior="automatic"
+      nestedScrollEnabled
       renderItem={(itemData) => (
         <PostItem post={itemData.item} onPress={onSelectedPostHandler} />
       )}

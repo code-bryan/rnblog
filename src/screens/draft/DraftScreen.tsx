@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import {
-  Container, Content, Header,
+  Container, Content, Header, View,
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import {
+  Alert,
   FlatList, Platform, RefreshControl, StyleSheet,
 } from 'react-native';
 import User from '../../models/User';
@@ -15,7 +16,7 @@ import Post from '../../models/Post';
 import DraftItems from '../../components/molecules/DraftItems';
 import SearchHeader from '../../components/molecules/header/SearchHeader';
 import {
-  cleanDraftError, getAllDrafts, refreshDrafts, selectDraft,
+  cleanDraftError, deleteDraft, getAllDrafts, refreshDrafts, selectDraft,
 } from '../../store/modules/Drafts';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
 import ToastService from '../../services/ToastService';
@@ -51,9 +52,20 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
     });
   }, [drafts, navigation]);
 
-  useEffect(() => {
-    dispatch(getAllDrafts(user.uid));
-  }, [dispatch, user]);
+  const onLongSelectPost = useCallback((id: string) => {
+    Alert.alert('Delete draft', 'Are you sure to delete this draft?', [
+      {
+        text: 'Yes',
+        onPress: () => {
+          const draft: Post = drafts.find((d) => d.id === id) as Post;
+          dispatch(deleteDraft(draft));
+        },
+      },
+      {
+        text: 'No',
+      },
+    ]);
+  }, [drafts, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -63,14 +75,14 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
     }
   }, [error, dispatch]);
 
+  useEffect(() => {
+    console.log(drafts);
+  }, [drafts]);
+
   return (
     <Container>
       <Header transparent />
-      <Content
-        padder
-        refreshing={refreshing}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
+      <View style={{ flex: 1 }}>
         <SearchHeader>My Drafts</SearchHeader>
 
         {drafts.length <= 0 && (
@@ -81,14 +93,17 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
           data={drafts}
           style={styles.list}
           keyExtractor={(item) => item.id}
+          refreshing={refreshing}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           renderItem={(item) => (
             <DraftItems
               post={item.item}
               onPress={onPostSelected}
+              onLongPress={onLongSelectPost}
             />
           )}
         />
-      </Content>
+      </View>
     </Container>
   );
 };

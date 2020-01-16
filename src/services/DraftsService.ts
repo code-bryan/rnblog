@@ -46,6 +46,11 @@ class DraftsService {
     await firebase.firestore().collection('posts').doc(post.id).update(post);
     return this.getAllDrafts(post.author.uid);
   }
+
+  async deleteDraft(post: Post): Promise<Post[]> {
+    await firebase.firestore().collection('posts').doc(post.id).delete();
+    return this.getAllDrafts(post.author.uid);
+  }
 }
 
 export default new DraftsService();

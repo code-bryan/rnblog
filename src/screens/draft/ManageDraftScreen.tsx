@@ -24,10 +24,6 @@ interface ReducerValue {
 const CHANGE_FORM = 'CHANGE_FORM';
 const CLEAN_FORM = 'CLEAN_FORM';
 
-const INITIAL_STATE: ReducerValue = {
-  form: new Post(),
-};
-
 const FormReducer = (state: ReducerValue, action: Partial<ActionReducer>) => {
   switch (action.type) {
     case CHANGE_FORM:
@@ -48,10 +44,17 @@ const ContentStyled: React.FC<NativeBase.Content> = styled(Content)`
 `;
 
 const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
+  const INITIAL_STATE: ReducerValue = {
+    form: new Post(),
+  };
+
   // eslint-disable-next-line react/prop-types
   const { navigation } = props;
   const [editMode] = useState(navigation.getParam('edit'));
-  INITIAL_STATE.form = useSelector((state: any) => state.drafts.selectedDraft);
+  const draft = useSelector((state: any) => state.drafts.selectedDraft);
+  if (editMode) {
+    INITIAL_STATE.form = draft || INITIAL_STATE.form;
+  }
   INITIAL_STATE.form.author = useSelector((state: any) => state.auth.user);
   const [formState, formDispatch] = useReducer(FormReducer, INITIAL_STATE);
   const dispatch = useDispatch();

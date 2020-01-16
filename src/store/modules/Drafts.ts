@@ -10,7 +10,7 @@ interface DraftReducer {
 }
 
 const GET_DRAFTS = 'DRAFT/GET_DRAFTS';
-const SAVE_DRAFTS = 'DRAFT/SAVE_DRAFTS';
+const RELOAD_DRAFTS = 'DRAFT/RELOAD_DRAFTS';
 const DRAFT_ERROR = 'DRAFT/DRAFT_ERROR';
 const REFRESHING_DRAFTS = 'DRAFT/REFRESHING_DRAFTS';
 const CLEAN_DRAFT_ERROR = 'DRAFT/CLEAN_DRAFT_ERROR';
@@ -25,6 +25,11 @@ const INITIAL_STATE: DraftReducer = {
 const Reducer = (state: DraftReducer = INITIAL_STATE, action: ActionReducer) => {
   switch (action.type) {
     case GET_DRAFTS:
+      return {
+        ...state,
+        drafts: action.payload,
+      };
+    case RELOAD_DRAFTS:
       return {
         ...state,
         drafts: action.payload,
@@ -68,7 +73,25 @@ export const getAllDrafts = (userId: string) => async (dispatch: any) => {
 export const saveDraft = (post: Post) => async (dispatch: any) => {
   try {
     const drafts = await DraftsService.saveDraft(post);
-    dispatch({ type: SAVE_DRAFTS, payload: drafts });
+    dispatch({ type: RELOAD_DRAFTS, payload: drafts });
+  } catch (e) {
+    dispatch({ type: DRAFT_ERROR, payload: e.message });
+  }
+};
+
+export const publishDraft = (post: Post) => async (dispatch: any) => {
+  try {
+    const drafts = await DraftsService.publishDraft(post);
+    dispatch({ type: RELOAD_DRAFTS, payload: drafts });
+  } catch (e) {
+    dispatch({ type: DRAFT_ERROR, payload: e.message });
+  }
+};
+
+export const deleteDraft = (post: Post) => async (dispatch: any) => {
+  try {
+    const drafts = await DraftsService.deleteDraft(post);
+    dispatch({ type: RELOAD_DRAFTS, payload: drafts });
   } catch (e) {
     dispatch({ type: DRAFT_ERROR, payload: e.message });
   }
@@ -77,7 +100,7 @@ export const saveDraft = (post: Post) => async (dispatch: any) => {
 export const editDraft = (post: Post) => async (dispatch: any) => {
   try {
     const drafts = await DraftsService.editDraft(post);
-    dispatch({ type: SAVE_DRAFTS, payload: drafts });
+    dispatch({ type: RELOAD_DRAFTS, payload: drafts });
   } catch (e) {
     dispatch({ type: DRAFT_ERROR, payload: e.message });
   }
@@ -95,14 +118,7 @@ export const selectDraft = (post: Post) => (dispatch: any) => dispatch(
   { type: SELECT_DRAFT, payload: post },
 );
 
-export const publishDraft = (post: Post) => async (dispatch: any) => {
-  try {
-    const drafts = await DraftsService.publishDraft(post);
-    dispatch({ type: SAVE_DRAFTS, payload: drafts });
-  } catch (e) {
-    dispatch({ type: DRAFT_ERROR, payload: e.message });
-  }
-};
+
 
 export default {
   Reducer,
