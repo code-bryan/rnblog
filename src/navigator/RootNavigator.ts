@@ -7,8 +7,20 @@ import DraftStack from './stacks/DraftStack';
 import AppMenu from '../components/organisms/AppMenu';
 
 const DrawerStack = createDrawerNavigator({
-  Feeds: PostStack,
-  Draft: DraftStack,
+  Feeds: {
+    screen: PostStack,
+    params: {
+      icon: 'compass',
+      title: 'Discover News',
+    },
+  },
+  Draft: {
+    screen: DraftStack,
+    params: {
+      icon: 'clipboard',
+      title: 'My Drafts',
+    },
+  },
 }, {
   initialRouteName: 'Feeds',
   contentComponent: AppMenu,

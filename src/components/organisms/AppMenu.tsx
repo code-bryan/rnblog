@@ -1,36 +1,43 @@
 import { SafeAreaView, ScrollView } from 'react-native';
-import { Icon, Item, Text } from 'native-base';
 import { DrawerContentComponentProps } from 'react-navigation-drawer';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/modules/Authentication';
+import MenuItem from '../molecules/MenuItem';
+import UserMenuItem from "../molecules/UserMenuItem";
 
 const AppMenu: React.FC<DrawerContentComponentProps> = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
+  const [routeName, setRouteName] = useState(navigation.state.routes[navigation.state.index].routeName);
 
   const onLogout = useCallback(() => {
     dispatch(logout());
     navigation.navigate('Auth');
   }, [dispatch]);
 
+  useEffect(() => {
+    setRouteName(navigation.state.routes[navigation.state.index].routeName);
+  }, [navigation, setRouteName]);
+
   return (
     <SafeAreaView>
       <ScrollView>
-        <Item onPress={() => { navigation.navigate('Feeds'); }}>
-          <Icon name="home" />
-          <Text>Feeds</Text>
-        </Item>
+        <UserMenuItem onPress={() => { navigation.navigate('Profile'); }} />
 
-        <Item onPress={() => { navigation.navigate('Draft'); }}>
-          <Icon name="clipboard" />
-          <Text>Draft</Text>
-        </Item>
+        {navigation.state.routes.map((item) => (
+          <MenuItem
+            menuIconName={item.params.icon}
+            active={item.routeName === routeName}
+            onPress={() => { navigation.navigate(item.key); }}
+          >
+            {item.params.title}
+          </MenuItem>
+        ))}
 
-        <Item onPress={onLogout}>
-          <Icon name="log-out" />
-          <Text>Logout</Text>
-        </Item>
+        <MenuItem menuIconName="md-log-in" onPress={onLogout}>
+          Logout
+        </MenuItem>
       </ScrollView>
     </SafeAreaView>
   );
