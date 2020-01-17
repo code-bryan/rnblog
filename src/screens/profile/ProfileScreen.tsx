@@ -7,7 +7,7 @@ import {
   Container, Content, Header, NativeBase, View,
 } from 'native-base';
 import styled from 'styled-components/native';
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { NavigationEvents } from 'react-navigation';
 import User from '../../models/User';
@@ -18,6 +18,7 @@ import ProfileForm from '../../components/organisms/ProfileForm';
 import { ActionReducer } from '../../types/ActionReducer';
 import ToastService from '../../services/ToastService';
 import { cleanAuthError, updateUserProfile } from '../../store/modules/Authentication';
+import AuthenticationService from "../../services/AuthenticationService";
 
 const styles = StyleSheet.create({
   content: {
@@ -125,12 +126,33 @@ const ProfileScreen: NavigationStackScreenComponent<any, any> = (props) => {
     setReadMode((currentReadMode) => !currentReadMode);
   }, [setReadMode, formState, readMode]);
 
+  const onChangePassword = useCallback(() => {
+    Alert.alert('Change password', 'Are you sure to change password?', [
+      {
+        text: 'Yes',
+        onPress: () => {
+          AuthenticationService.forgotPassword(user.email);
+          const text = `A Reset password email has been send to your  inbox, please follow to the steps.`;
+          Alert.alert('Change password', text, [
+            {
+              text: 'Dismiss',
+            },
+          ]);
+        },
+      },
+      {
+        text: 'No',
+      },
+    ]);
+  }, [user]);
+
   useEffect(() => {
     navigation.setParams({
       onToggleEditMode,
+      onChangePassword,
       readMode,
     });
-  }, [readMode, onToggleEditMode]);
+  }, [readMode, onToggleEditMode, onChangePassword]);
 
   useEffect(() => {
     if (error) {
@@ -171,9 +193,11 @@ ProfileScreen.navigationOptions = (navData) => ({
     <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
       <Item
         title="Settings"
-        iconName="md-settings"
+        iconName="md-key"
         buttonStyle={{ marginRight: 20 }}
         onPress={() => {
+          const onChangePassword: Function = navData.navigation.getParam('onChangePassword');
+          onChangePassword();
         }}
       />
       <Item
