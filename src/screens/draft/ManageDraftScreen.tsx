@@ -121,7 +121,7 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
       <Header transparent />
       <NavigationEvents onWillFocus={onWillFocusHandler} />
       <ContentStyled>
-        <ManageDraftForm newPost={formState.form} onChange={onChangeHandler} />
+        <ManageDraftForm editMode={editMode} newPost={formState.form} onChange={onChangeHandler} />
       </ContentStyled>
     </Container>
   );

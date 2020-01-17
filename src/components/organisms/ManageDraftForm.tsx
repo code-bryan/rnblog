@@ -1,20 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Content,
-  Form, Icon, Input, Item, NativeBase, Picker, Radio, Text, View,
+  Form, Input, NativeBase, Picker, View,
 } from 'native-base';
 import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
-import { TouchableOpacity } from 'react-native';
 import EditorInputContainer from '../molecules/editor/EditorInputContainer';
 import Post from '../../models/Post';
 import Category from '../../models/Category';
-import FieldPicker from "../molecules/form/FieldPicker";
-import FieldRadio from "../molecules/form/FieldRadio";
+import FieldPicker from '../molecules/form/FieldPicker';
+import FieldRadio from '../molecules/form/FieldRadio';
 
 interface Props {
   newPost: Post;
   onChange: Function;
+  editMode: boolean;
 }
 
 const InputStyled: React.FC<NativeBase.Input> = styled(Input)`
@@ -25,17 +24,9 @@ const InputTitle: React.FC<NativeBase.Input> = styled(InputStyled)`
   font-weight: bold;
 `;
 
-const Touchable = styled(TouchableOpacity)`
-  flex-direction: row;
-  margin: 10px 5px;
-  align-content: flex-start;
-  justify-content: space-between;
-  padding: 15px 0;
-`;
-
 const ManageDraftForm: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { newPost, onChange } = props;
+  const { newPost, onChange, editMode } = props;
   const [cat, setCat] = useState([]);
   const categories: Category[] = useSelector((state: any) => state.posts.categories);
 
@@ -109,7 +100,7 @@ const ManageDraftForm: React.FC<Props> = (props) => {
 
       <View>
         {/* eslint-disable-next-line react/prop-types */}
-        <EditorInputContainer body={newPost.body} onEditorChange={onEditorChange} />
+        <EditorInputContainer editMode={editMode} body={newPost.body} onEditorChange={onEditorChange} />
       </View>
     </Form>
   );

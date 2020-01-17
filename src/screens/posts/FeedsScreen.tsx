@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Content, Header, View } from 'native-base';
-import { RefreshControl, StyleSheet } from 'react-native';
+import { Container, Header, View } from 'native-base';
+import { RefreshControl } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 

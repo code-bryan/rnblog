@@ -49,8 +49,12 @@ const InputMutedText: React.FC<Props> = (props) => {
     }
   }, [onChangeTextarea, onInputChange, isValid, setIsValid]);
 
-  const onContentSizeChangeHandler = useCallback(() => {
+  const onScrollHandler = useCallback(() => {
     setRow((currentRow) => currentRow + 1);
+  }, [setRow]);
+
+  const onContentSizeChangeHandler = useCallback(() => {
+    setRow((currentRow) => currentRow - 1);
   }, [setRow]);
 
   return (
@@ -63,6 +67,7 @@ const InputMutedText: React.FC<Props> = (props) => {
         value={props.defaultValue}
         fontSize={props.fontSize}
         onChangeText={onTextAreaChangeHandler}
+        onScroll={onScrollHandler}
         onContentSizeChange={onContentSizeChangeHandler}
         disabled={props.disabled}
       />

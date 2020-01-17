@@ -17,7 +17,7 @@ import CustomHeaderButton from '../../components/atoms/button/CustomHeaderButton
 import ProfileForm from '../../components/organisms/ProfileForm';
 import { ActionReducer } from '../../types/ActionReducer';
 import ToastService from '../../services/ToastService';
-import { authenticateUser, cleanAuthError, updateUserProfile } from "../../store/modules/Authentication";
+import { cleanAuthError, updateUserProfile } from '../../store/modules/Authentication';
 
 const styles = StyleSheet.create({
   content: {
@@ -169,6 +169,13 @@ ProfileScreen.navigationOptions = (navData) => ({
   ),
   headerRight: () => (
     <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+      <Item
+        title="Settings"
+        iconName="md-settings"
+        buttonStyle={{ marginRight: 20 }}
+        onPress={() => {
+        }}
+      />
       <Item
         title="Save"
         iconName={navData.navigation.getParam('readMode') ? 'md-create' : 'md-checkmark'}

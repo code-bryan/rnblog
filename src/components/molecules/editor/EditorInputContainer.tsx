@@ -10,6 +10,7 @@ import InputTitle from '../../atoms/input/InputTitle';
 interface Props {
   body: string[];
   onEditorChange: Function;
+  editMode: boolean;
 }
 
 class Content {
@@ -42,7 +43,7 @@ const CloseIcon: React.FC<NativeBase.Icon> = styled(Icon)`
 
 const EditorInputContainer: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { body, onEditorChange } = props;
+  const { body, onEditorChange, editMode } = props;
   const [content, setContent] = useState([]);
   const [run, setRun] = useState(true);
 
@@ -86,7 +87,7 @@ const EditorInputContainer: React.FC<Props> = (props) => {
   }, [setContent, content]);
 
   useEffect(() => {
-    if (run && body.length > 0) {
+    if (editMode && run && body.length > 0) {
       body.map((item) => {
         const [type, value] = item.split('||');
         const editContent = new Content();
@@ -97,7 +98,7 @@ const EditorInputContainer: React.FC<Props> = (props) => {
 
       setRun(false);
     }
-  }, [body, run, setRun]);
+  }, [body, run, setRun, editMode]);
 
   return (
     <Container>
