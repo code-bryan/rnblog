@@ -87,6 +87,16 @@ export const completeRegistration = (newUser: User) => async (dispatch: any) => 
   }
 };
 
+export const updateUserProfile = (userUpdate: User) => async (dispatch: any) => {
+  try {
+    const user = await AuthenticationService.userProfile(userUpdate);
+    dispatch({ type: COMPLETE_AUTH_USER, user });
+  } catch (e) {
+    dispatch({ type: REGISTER_ERROR, errorMessage: e.message });
+  }
+};
+
+
 export const cleanAuthError = () => (dispatch: any) => dispatch({ type: CLEAN_AUTH_ERROR });
 
 export default {

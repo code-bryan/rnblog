@@ -9,6 +9,8 @@ import { TouchableOpacity } from 'react-native';
 import EditorInputContainer from '../molecules/editor/EditorInputContainer';
 import Post from '../../models/Post';
 import Category from '../../models/Category';
+import FieldPicker from "../molecules/form/FieldPicker";
+import FieldRadio from "../molecules/form/FieldRadio";
 
 interface Props {
   newPost: Post;
@@ -89,29 +91,21 @@ const ManageDraftForm: React.FC<Props> = (props) => {
         />
       </View>
 
-      <Touchable activeOpacity={0.6} onPress={onCommentsAvailableHandler}>
-        <Text>Comments Available</Text>
-        <Radio
-          selected={newPost.commentsAvailable}
-          onPress={onCommentsAvailableHandler}
-          selectedColor="#000"
-          activeOpacity={0.6}
-        />
-      </Touchable>
+      <FieldRadio selected={newPost.commentsAvailable} onPress={onCommentsAvailableHandler}>
+        Comments Available
+      </FieldRadio>
 
-
-      <Picker
-        mode="dropdown"
+      <FieldPicker
         textStyle={{ paddingLeft: 7, paddingRight: 0 }}
-        iosIcon={<Icon name="arrow-down" style={{ marginRight: 3 }} fontSize={32} />}
-        placeholder="Select a category"
         selectedValue={newPost.category.id}
+        placeholder="Select a category"
         onValueChange={onCategoryChangeHandler}
       >
         {cat.map((category) => (
           <Picker.Item key={category.id} label={category.value} value={category.id} />
         ))}
-      </Picker>
+      </FieldPicker>
+
 
       <View>
         {/* eslint-disable-next-line react/prop-types */}

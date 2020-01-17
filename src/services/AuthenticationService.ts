@@ -50,6 +50,19 @@ class AuthenticationService {
   async forgotPassword(email: string) {
     await firebase.auth().sendPasswordResetEmail(email);
   }
+
+  async userProfile(user: User): Promise<User> {
+    const users = await firebase.firestore()
+      .collection('users')
+      .where('uid', '==', user.uid)
+      .get();
+
+    users.forEach((item) => {
+      firebase.firestore().collection('users').doc(item.id).update(user);
+    });
+
+    return user;
+  }
 }
 
 export default new AuthenticationService();

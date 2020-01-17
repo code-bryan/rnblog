@@ -5,6 +5,7 @@ import AuthenticationLoadingScreen from '../screens/authentication/Authenticatio
 import PostStack from './stacks/PostStack';
 import DraftStack from './stacks/DraftStack';
 import AppMenu from '../components/organisms/AppMenu';
+import ProfileStack from './stacks/ProfileStack';
 
 const DrawerStack = createDrawerNavigator({
   Feeds: {
@@ -12,6 +13,7 @@ const DrawerStack = createDrawerNavigator({
     params: {
       icon: 'compass',
       title: 'Discover News',
+      show: true,
     },
   },
   Draft: {
@@ -19,6 +21,13 @@ const DrawerStack = createDrawerNavigator({
     params: {
       icon: 'clipboard',
       title: 'My Drafts',
+      show: true,
+    },
+  },
+  Profile: {
+    screen: ProfileStack,
+    params: {
+      show: false,
     },
   },
 }, {

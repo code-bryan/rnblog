@@ -3,7 +3,6 @@ import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
 import { View } from 'native-base';
 import { TouchableOpacity } from 'react-native';
-import MenuContent from '../atoms/Menu/MenuContent';
 import User from '../../models/User';
 import CircleImage from '../atoms/images/CircleImage';
 import MutedText from '../atoms/text/MutedText';
@@ -12,12 +11,16 @@ interface Props {
   onPress: Function
 }
 
-const StyledMenuContent = styled(MenuContent)`
+const StyledMenuContent = styled(View)`
   padding-top: 25px;
   border-bottom-color: #ccc;
   border-bottom-width: 1px;
-  padding-bottom: 25px;
+  padding-bottom: 15px;
   width: 70%;
+  flex-direction: row;
+  margin: 10px 40px;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 const UserInfoContainer = styled(View)`
@@ -32,7 +35,7 @@ const UserMenuItem: React.FC<Props> = (props) => {
       <StyledMenuContent>
         <CircleImage source={{ uri: user.avatar }} width={50} height={50} />
         <UserInfoContainer>
-          <MutedText margin>
+          <MutedText noMargin bold>
             {user.name}
             {' '}
             {user.lastname}

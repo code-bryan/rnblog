@@ -36,6 +36,7 @@ const SearchHeader: React.FC<Props> = (props) => {
       post.title.toLocaleLowerCase().trim().includes(fixedText)
       || post.author.name.toLocaleLowerCase().trim().includes(fixedText)
       || post.author.lastname.toLocaleLowerCase().trim().includes(fixedText)
+      || post.category.value.toLocaleLowerCase().trim().includes(fixedText)
       || post.author.username.includes(`${fixedText}`)
     )) as Post[];
 

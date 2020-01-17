@@ -1,51 +1,72 @@
 import React, { useCallback, useState } from 'react';
+import {
+  Item, Label, NativeBase, Textarea,
+} from 'native-base';
 import styled from 'styled-components/native';
-import { NativeBase, Textarea, View } from 'native-base';
 
 interface Props extends Partial<NativeBase.Textarea>{
+  id?: string;
   fontSize?: number;
   placeholder?: string;
   onChangeTextarea?: Function;
-  defaultValue?: string,
+  defaultValue?: string;
+  dismissLabel?: boolean;
+  disabled?: boolean;
+  onInputChange?: Function;
 }
 
 const InputTextarea: React.FC<Props> = styled(Textarea)`
   color: #656565;
   font-size: ${(props: Props) => (props.fontSize ? `${props.fontSize}px` : '16px')};
-  margin-bottom: 20px;
+  margin-bottom: 0;
+  width: 100%;
+`;
+
+const ItemStyled: React.FC<NativeBase.Item> = styled(Item)`
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-left: 0;
+`;
+
+const LabelStyled: React.FC<NativeBase.Label> = styled(Label)`
+  margin-left: 10px;
+  margin-bottom: 10px;
 `;
 
 const InputMutedText: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
-  const { onChangeTextarea } = props;
-  const [value, setValue] = useState(props.defaultValue || '');
-  const [row, setRow] = useState(2);
+  const { id, onChangeTextarea, onInputChange } = props;
+  const [row, setRow] = useState(1);
+  const [isValid, setIsValid] = useState(true);
 
   const onTextAreaChangeHandler = useCallback((text: string) => {
-    setValue(text);
-
     if (onChangeTextarea) {
       onChangeTextarea(text);
     }
-  }, [setValue, onChangeTextarea]);
 
-  const onScrollHandler = useCallback(() => {
+    if (onInputChange) {
+      onInputChange(id, text, isValid);
+    }
+  }, [onChangeTextarea, onInputChange, isValid, setIsValid]);
+
+  const onContentSizeChangeHandler = useCallback(() => {
     setRow((currentRow) => currentRow + 1);
   }, [setRow]);
 
   return (
-    <View>
+    <ItemStyled stackedLabel>
+      <LabelStyled>{props.placeholder}</LabelStyled>
       <InputTextarea
+        multiline
         rowSpan={row}
-        bordered
-        underline
-        value={value}
-        placeholder={props.placeholder}
+        defaultValue={props.defaultValue}
+        value={props.defaultValue}
         fontSize={props.fontSize}
         onChangeText={onTextAreaChangeHandler}
-        onScroll={onScrollHandler}
+        onContentSizeChange={onContentSizeChangeHandler}
+        disabled={props.disabled}
       />
-    </View>
+    </ItemStyled>
   );
 };
 

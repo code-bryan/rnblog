@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components/native';
-import { NativeBase, Textarea, View } from 'native-base';
+import { Item, NativeBase, Textarea, View } from 'native-base';
 import Colors from '../../../constants/Colors';
 
 interface Props extends Partial<NativeBase.Textarea>{
@@ -37,11 +37,9 @@ const InputTitle: React.FC<Props> = (props) => {
   }, [setRow]);
 
   return (
-    <View>
+    <Item>
       <InputTextarea
         rowSpan={row}
-        bordered
-        underline
         value={value}
         placeholder={props.placeholder}
         fontSize={props.fontSize}
@@ -50,7 +48,7 @@ const InputTitle: React.FC<Props> = (props) => {
         onChangeText={onTextAreaChangeHandler}
         onScroll={onScrollHandler}
       />
-    </View>
+    </Item>
   );
 };
 

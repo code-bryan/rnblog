@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/modules/Authentication';
 import MenuItem from '../molecules/MenuItem';
-import UserMenuItem from "../molecules/UserMenuItem";
+import UserMenuItem from '../molecules/UserMenuItem';
 
 const AppMenu: React.FC<DrawerContentComponentProps> = (props) => {
   const { navigation } = props;
@@ -25,14 +25,17 @@ const AppMenu: React.FC<DrawerContentComponentProps> = (props) => {
       <ScrollView>
         <UserMenuItem onPress={() => { navigation.navigate('Profile'); }} />
 
-        {navigation.state.routes.map((item) => (
-          <MenuItem
-            menuIconName={item.params.icon}
-            active={item.routeName === routeName}
-            onPress={() => { navigation.navigate(item.key); }}
-          >
-            {item.params.title}
-          </MenuItem>
+        {navigation.state.routes.map((item, index) => (
+          (item.params.show && (
+            <MenuItem
+              key={index}
+              menuIconName={item.params.icon}
+              active={item.routeName === routeName}
+              onPress={() => { navigation.navigate(item.key); }}
+            >
+              {item.params.title}
+            </MenuItem>
+          ))
         ))}
 
         <MenuItem menuIconName="md-log-in" onPress={onLogout}>

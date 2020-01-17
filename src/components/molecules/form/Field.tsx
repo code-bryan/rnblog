@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
 import {
-  Input, Item, NativeBase, View,
+  Icon,
+  Input, Item, Label, NativeBase, View,
 } from 'native-base';
-import TextAlert from '../../atoms/text/Alert';
 
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
 const VALUE_CHANGE = 'VALUE_CHANGE';
@@ -19,6 +19,7 @@ interface Props extends NativeBase.Input{
   last?: boolean;
   minLength?: number;
   onInputChange?: Function;
+  dismissLabel?: boolean;
 }
 
 interface InputReducerValues {
@@ -57,6 +58,8 @@ const Field: React.FC<Props> = (props: Props) => {
     rounded,
     numberOfLines,
     last,
+    dismissLabel,
+    disabled,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -70,12 +73,6 @@ const Field: React.FC<Props> = (props: Props) => {
   const onTouchedInput = useCallback(() => {
     dispatch({ type: INPUT_TOUCHED });
   }, [dispatch]);
-
-  useEffect(() => {
-    if (state.touched && onInputChange) {
-      onInputChange(id, state.value, state.isValid);
-    }
-  }, [state, onInputChange]);
 
   const onInputTextChange = useCallback((text: string) => {
     // eslint-disable-next-line no-useless-escape
@@ -110,25 +107,37 @@ const Field: React.FC<Props> = (props: Props) => {
     });
   }, [id, dispatch]);
 
+  useEffect(() => {
+    if (state.touched) {
+      onInputChange(id, state.value, state.isValid);
+    }
+  }, [state]);
+
   return (
     <View style={{ marginBottom: !last ? 20 : 0 }}>
-      <Item rounded={rounded} style={{ paddingLeft: 15 }}>
+      <Item rounded={rounded} error={!state.isValid && state.touched} style={{ paddingLeft: rounded ? 15 : 0 }}>
+        {dismissLabel && (
+          <Label style={{ paddingLeft: 5 }}>
+            {label}
+:
+          </Label>
+        )}
         <Input
-          placeholder={label}
+          placeholder={!dismissLabel ? label : ''}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry}
           value={state.value}
           onBlur={onTouchedInput}
           onChangeText={onInputTextChange}
           numberOfLines={numberOfLines}
+          style={{ textAlign: dismissLabel ? 'right' : 'left' }}
+          disabled={disabled}
         />
 
-      </Item>
-      <View style={{ marginLeft: 15 }}>
-        {!state.isValid && state.touched && (
-          <TextAlert style={{ marginTop: 10 }}>This input is not valid</TextAlert>
+        {(!state.isValid && state.touched) && (
+          <Icon name="close-circle" />
         )}
-      </View>
+      </Item>
     </View>
   );
 };

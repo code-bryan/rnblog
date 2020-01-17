@@ -15,11 +15,13 @@ class User {
 
   lastname: string = '';
 
-  avatar: string = '';
+  avatar: string = 'https://images.pexels.com/photos/3321256/pexels-photo-3321256.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
 
   description: string = '';
 
   apiKey: string = '';
+
+  privacy: boolean = false;
 
   static async fromAuthUser(firebaseUser: FirebaseUser, password: string): Promise<User> {
     const user = new User();

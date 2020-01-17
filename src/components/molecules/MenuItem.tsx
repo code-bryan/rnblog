@@ -1,8 +1,8 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import MenuIcon from '../atoms/Menu/MenuIcon';
-import MenuText from '../atoms/Menu/MenuText';
-import MenuContent from '../atoms/Menu/MenuContent';
+import MenuIcon from '../atoms/menu/MenuIcon';
+import MenuText from '../atoms/menu/MenuText';
+import MenuContent from '../atoms/menu/MenuContent';
 
 interface Props {
   menuIconName: string;
