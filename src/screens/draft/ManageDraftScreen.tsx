@@ -112,8 +112,8 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
   }, [formState]);
 
   useEffect(() => {
-    navigation.setParams({ onSaveDraft });
-    navigation.setParams({ onPublish });
+    const { publishDate } = formState.form;
+    navigation.setParams({ onSaveDraft, onPublish, publishDate });
   }, []);
 
   return (
@@ -127,34 +127,39 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
   );
 };
 
-ManageDraftScreen.navigationOptions = (navData) => ({
-  headerTitle: '',
-  headerTransparent: true,
-  headerRight: () => (
-    <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-      {navData.navigation.getParam('edit') && (
+ManageDraftScreen.navigationOptions = (navData) => {
+  const publishDate = navData.navigation.getParam('publishDate');
+  const isPublishDataAvailable = (publishDate && publishDate.length <= 0);
+
+  return {
+    headerTitle: '',
+    headerTransparent: true,
+    headerRight: () => (
+      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+        {(isPublishDataAvailable && navData.navigation.getParam('edit')) && (
+          <Item
+            title="Send"
+            iconName={Platform.OS === 'android' ? 'md-send' : 'ios-send'}
+            buttonStyle={{ marginRight: 20 }}
+            onPress={() => {
+              const onPublish: Function = navData.navigation.getParam('onPublish');
+              onPublish();
+            }}
+          />
+        )}
+
         <Item
-          title="Send"
-          iconName={Platform.OS === 'android' ? 'md-send' : 'ios-send'}
+          title="Save"
+          iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
           buttonStyle={{ marginRight: 20 }}
           onPress={() => {
-            const onPublish: Function = navData.navigation.getParam('onPublish');
-            onPublish();
+            const onSaveDraft: Function = navData.navigation.getParam('onSaveDraft');
+            onSaveDraft();
           }}
         />
-      )}
-
-      <Item
-        title="Save"
-        iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-        buttonStyle={{ marginRight: 20 }}
-        onPress={() => {
-          const onSaveDraft: Function = navData.navigation.getParam('onSaveDraft');
-          onSaveDraft();
-        }}
-      />
-    </HeaderButtons>
-  ),
-});
+      </HeaderButtons>
+    ),
+  };
+};
 
 export default ManageDraftScreen;

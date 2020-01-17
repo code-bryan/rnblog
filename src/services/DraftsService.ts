@@ -17,10 +17,6 @@ class DraftsService {
         return;
       }
 
-      if (draft.publishDate.length > 0) {
-        return;
-      }
-
       allDrafts.push(draft);
     });
 
