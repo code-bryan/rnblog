@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Container, Content, Header } from 'native-base';
-import { NavigationScreenComponent } from 'react-navigation';
+import { NavigationActions, NavigationScreenComponent } from 'react-navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyleSheet } from 'react-native';
 import Post from '../../models/Post';
@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
 });
 
 const PostScreen: NavigationScreenComponent<Params, ScreenProps> = (props) => {
+  // eslint-disable-next-line react/prop-types
+  const { navigation } = props;
   const user: User = useSelector((state: any) => state.auth.user);
   const post: Post = useSelector((state: any) => state.posts.post);
   const dispatch = useDispatch();
@@ -38,12 +40,21 @@ const PostScreen: NavigationScreenComponent<Params, ScreenProps> = (props) => {
     dispatch(addLike(post));
   }, [user, post, dispatch]);
 
+  const onUserTab = useCallback(() => {
+    const { author } = post;
+
+    navigation.navigate({
+      routeName: 'ProfileInfo',
+      params: { author },
+    });
+  }, [post, navigation]);
+
   return (
     <Container>
       <Header transparent />
       <Content style={styles.content}>
         <Title>{post.title}</Title>
-        <PostUserInfo author={post.author} publishDate={post.publishDate} />
+        <PostUserInfo author={post.author} publishDate={post.publishDate} onUserTab={onUserTab} />
         <PostActions likes={post.likes} comments={post.comments} onLikePress={onLikeHandler} />
         <ItemImage source={{ uri: post.image }} height={200} />
         <EditorTextContainer body={post.body} />
@@ -52,7 +63,7 @@ const PostScreen: NavigationScreenComponent<Params, ScreenProps> = (props) => {
   );
 };
 
-PostScreen.navigationOptions = (navData) => ({
+PostScreen.navigationOptions = {
   headerTitle: '',
   headerTransparent: true,
   headerBackTitleVisible: false,
@@ -60,6 +71,6 @@ PostScreen.navigationOptions = (navData) => ({
   headerLeftContainerStyle: {
     marginLeft: 10,
   },
-});
+};
 
 export default PostScreen;

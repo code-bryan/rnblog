@@ -7,10 +7,12 @@ import moment from 'moment';
 import User from '../../models/User';
 import CircleImage from '../atoms/images/CircleImage';
 import DateFormats from '../../constants/DateFormats';
+import { TouchableOpacity } from "react-native";
 
 interface Props {
   author: User;
   publishDate: string;
+  onUserTab: Function
 }
 
 const AuthorName = styled.Text`
@@ -30,8 +32,9 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const PostUserInfoContainer = styled(Container)`
+const PostUserInfoContainer = styled(TouchableOpacity)`
   margin: 20px 0;
+  flex-direction: row;
   justify-content: space-between;
 `;
 
@@ -41,7 +44,7 @@ const IconStyled = styled(Icon)`
 `;
 
 const PostUserInfo: React.FC<Props> = (props) => {
-  const { author, publishDate } = props;
+  const { author, publishDate, onUserTab } = props;
   const [date, setDate] = useState('');
 
   useEffect(() => {
@@ -50,7 +53,7 @@ const PostUserInfo: React.FC<Props> = (props) => {
   }, [publishDate, setDate]);
 
   return (
-    <PostUserInfoContainer>
+    <PostUserInfoContainer activeOpacity={0.6} onPress={onUserTab}>
       <Container>
         { props.author.avatar.length > 0 && (
           <CircleImage source={{ uri: author.avatar }} width={50} height={50} />
@@ -65,7 +68,7 @@ const PostUserInfo: React.FC<Props> = (props) => {
         </View>
       </Container>
 
-      <Button transparent>
+      <Button transparent onPress={onUserTab}>
         <IconStyled name="ios-arrow-forward" />
       </Button>
     </PostUserInfoContainer>

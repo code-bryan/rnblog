@@ -23,14 +23,15 @@ const InputTextarea: React.FC<Props> = styled(Textarea)`
 `;
 
 const ItemStyled: React.FC<NativeBase.Item> = styled(Item)`
-  padding-top: 15px;
+  padding-top: 5px;
   padding-bottom: 15px;
   margin-left: 0;
 `;
 
 const LabelStyled: React.FC<NativeBase.Label> = styled(Label)`
-  margin-left: 10px;
+  margin-left: 6px;
   margin-bottom: 10px;
+  font-size: 17px;
 `;
 
 const InputMutedText: React.FC<Props> = (props) => {
@@ -59,7 +60,7 @@ const InputMutedText: React.FC<Props> = (props) => {
 
   return (
     <ItemStyled stackedLabel>
-      <LabelStyled>{props.placeholder}</LabelStyled>
+      <LabelStyled>{`${props.placeholder}:`}</LabelStyled>
       <InputTextarea
         multiline
         rowSpan={row}
