@@ -29,6 +29,7 @@ const CategoryList: React.FC<Props> = (props) => {
       keyExtractor={(item: any) => item.id.toString()}
       horizontal
       nestedScrollEnabled
+      showsHorizontalScrollIndicator={false}
       removeClippedSubviews={false}
       renderItem={(itemData) => (
         <CategoryPostItem
