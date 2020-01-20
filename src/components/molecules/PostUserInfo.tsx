@@ -4,15 +4,16 @@ import {
 } from 'native-base';
 import styled from 'styled-components/native';
 import moment from 'moment';
+import { TouchableOpacity } from 'react-native';
 import User from '../../models/User';
 import CircleImage from '../atoms/images/CircleImage';
 import DateFormats from '../../constants/DateFormats';
-import { TouchableOpacity } from "react-native";
 
 interface Props {
   author: User;
   publishDate: string;
-  onUserTab: Function
+  onUserTab: Function,
+  arrow?: boolean
 }
 
 const AuthorName = styled.Text`
@@ -36,6 +37,7 @@ const PostUserInfoContainer = styled(TouchableOpacity)`
   margin: 20px 0;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const IconStyled = styled(Icon)`
@@ -44,7 +46,10 @@ const IconStyled = styled(Icon)`
 `;
 
 const PostUserInfo: React.FC<Props> = (props) => {
-  const { author, publishDate, onUserTab } = props;
+  const {
+    // eslint-disable-next-line react/prop-types
+    author, publishDate, onUserTab, arrow,
+  } = props;
   const [date, setDate] = useState('');
 
   useEffect(() => {
@@ -59,18 +64,22 @@ const PostUserInfo: React.FC<Props> = (props) => {
           <CircleImage source={{ uri: author.avatar }} width={50} height={50} />
         ) }
         <View>
-          <AuthorName>
-            {author.name}
-            {' '}
-            {author.lastname}
-          </AuthorName>
-          <PublishDate>{date}</PublishDate>
+          <AuthorName>{`${author.name} ${author.lastname}`}</AuthorName>
+          { arrow && (
+            <PublishDate>{date}</PublishDate>
+          ) }
         </View>
       </Container>
 
-      <Button transparent onPress={onUserTab}>
-        <IconStyled name="ios-arrow-forward" />
-      </Button>
+      { arrow && (
+        <Button transparent onPress={onUserTab}>
+          <IconStyled name="ios-arrow-forward" />
+        </Button>
+      ) }
+
+      { !arrow && (
+        <PublishDate>{date}</PublishDate>
+      ) }
     </PostUserInfoContainer>
   );
 };

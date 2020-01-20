@@ -1,8 +1,10 @@
-class Comment {
-  id: number = 0;
+import User from './User';
 
-  author: number = 0;
+class Comment {
+  author: User = new User();
 
   body: string = '';
+
+  publishDate: string = '';
 }
 export default Comment;

@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import {
-  Item, Label, NativeBase, Textarea,
+  Input,
+  Item, Label, NativeBase,
 } from 'native-base';
 import styled from 'styled-components/native';
 
-interface Props extends Partial<NativeBase.Textarea>{
+interface Props extends Partial<NativeBase.Input>{
   id?: string;
   fontSize?: number;
   placeholder?: string;
@@ -15,7 +16,7 @@ interface Props extends Partial<NativeBase.Textarea>{
   onInputChange?: Function;
 }
 
-const InputTextarea: React.FC<Props> = styled(Textarea)`
+const InputStyled: React.FC<Props> = styled(Input)`
   color: #656565;
   font-size: ${(props: Props) => (props.fontSize ? `${props.fontSize}px` : '16px')};
   margin-bottom: 0;
@@ -24,7 +25,6 @@ const InputTextarea: React.FC<Props> = styled(Textarea)`
 
 const ItemStyled: React.FC<NativeBase.Item> = styled(Item)`
   padding-top: 5px;
-  padding-bottom: 15px;
   margin-left: 0;
 `;
 
@@ -37,7 +37,6 @@ const LabelStyled: React.FC<NativeBase.Label> = styled(Label)`
 const InputMutedText: React.FC<Props> = (props) => {
   // eslint-disable-next-line react/prop-types
   const { id, onChangeTextarea, onInputChange } = props;
-  const [row, setRow] = useState(1);
   const [isValid, setIsValid] = useState(true);
 
   const onTextAreaChangeHandler = useCallback((text: string) => {
@@ -50,26 +49,16 @@ const InputMutedText: React.FC<Props> = (props) => {
     }
   }, [onChangeTextarea, onInputChange, isValid, setIsValid]);
 
-  const onScrollHandler = useCallback(() => {
-    setRow((currentRow) => currentRow + 1);
-  }, [setRow]);
-
-  const onContentSizeChangeHandler = useCallback(() => {
-    setRow((currentRow) => currentRow - 1);
-  }, [setRow]);
-
   return (
     <ItemStyled stackedLabel>
       <LabelStyled>{`${props.placeholder}:`}</LabelStyled>
-      <InputTextarea
+      <InputStyled
         multiline
-        rowSpan={row}
+        scrollEnabled={false}
         defaultValue={props.defaultValue}
         value={props.defaultValue}
         fontSize={props.fontSize}
         onChangeText={onTextAreaChangeHandler}
-        onScroll={onScrollHandler}
-        onContentSizeChange={onContentSizeChangeHandler}
         disabled={props.disabled}
       />
     </ItemStyled>

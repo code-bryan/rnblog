@@ -25,7 +25,7 @@ class PostService {
     return allPosts;
   }
 
-  async AddLike(post: Post): Promise<Post[]> {
+  async updatePost(post: Post): Promise<Post[]> {
     await firebase.firestore().collection('posts').doc(post.id).set(post);
     return this.getALLPosts();
   }

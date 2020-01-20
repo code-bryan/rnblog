@@ -23,7 +23,8 @@ const INITIAL_STATE: UserState = {
 
 const UPDATE_CATEGORIES = 'UPDATE_CATEGORIES';
 const GET_ALL_POSTS = 'GET_ALL_POSTS';
-const ADD_LIKES = 'ADD_LIKES';
+const UPDATE_POSTS = 'UPDATE_POSTS';
+const UPDATE_COMENTARIES = 'UPDATE_COMENTARIES';
 const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 const SET_REFRESHING = 'SET_REFRESHING';
 const POST_DETAILS = 'POST_DETAILS';
@@ -41,11 +42,19 @@ const Reducer = (state: UserState = INITIAL_STATE, action: any) => {
         posts: action.payload.posts,
         selectedCategoryId: action.payload.categoryId,
       };
-    case ADD_LIKES:
+    case UPDATE_POSTS:
       return {
         ...state,
         posts: action.payload.posts,
         post: action.payload.post,
+      };
+    case UPDATE_COMENTARIES:
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: action.payload.post.comments,
+        },
       };
     case SET_ERROR_MESSAGE:
       return {
@@ -83,11 +92,12 @@ export const getAllPosts = (categoryId?: number) => async (dispatch: any, getSta
   dispatch({ type: SET_REFRESHING, refreshing: false });
 };
 
-export const addLike = (post: Post) => async (dispatch: any) => {
+export const updatePost = (post: Post) => async (dispatch: any) => {
   try {
-    const posts = await PostService.AddLike(post);
+    dispatch({ type: UPDATE_COMENTARIES, payload: { post } });
+    const posts = await PostService.updatePost(post);
     const postUpdated = posts.find((p) => p.id === post.id);
-    dispatch({ type: ADD_LIKES, payload: { posts, post: postUpdated } });
+    dispatch({ type: UPDATE_POSTS, payload: { posts, post: postUpdated } });
   } catch (e) {
     dispatch({ type: SET_ERROR_MESSAGE, error: e.message });
   }
