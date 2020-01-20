@@ -10,9 +10,11 @@ import {
   Item as ItemContainer,
   NativeBase,
   Right,
+  Text,
 } from 'native-base';
 import styled from 'styled-components/native';
 import moment from 'moment';
+import MentionInput from 'react-native-mention';
 import Title from '../../components/atoms/text/Title';
 import ToastService from '../../services/ToastService';
 import { updatePost } from '../../store/modules/Posts';
@@ -45,6 +47,8 @@ const StyledIcon: React.FC<NativeBase.Icon> = styled(Icon)`
   color: #000;
 `;
 
+const unique = (array: any[]) => [...new Set(array.map((s) => JSON.stringify(s)))].map((s) => JSON.parse(s));
+
 const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScreenProps) => {
   const { navigation } = props;
   const comment: Comment = navigation.getParam('comment');
@@ -54,6 +58,9 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
   const user: User = useSelector((state: any) => state.auth.user);
   const selectedPost: Post = useSelector((state: any) => state.posts.post);
   const dispatch = useDispatch();
+
+  const [mentionSuggestions, setMentionSuggestions] = useState([]);
+  const [allUniqueSuggestions, setAllUniqueSuggestions] = useState([]);
 
   const onChangeTextHandler = useCallback((text: string) => {
     setValue(text);
@@ -104,6 +111,39 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
     }
   }, [error, value, setError]);
 
+  const onMentionChangeText = useCallback((text: string) => {
+    const data = users;
+    const suggestions = data.filter((user) => user.name.toLocaleUpperCase().includes(text.toLocaleUpperCase()));
+
+    const trasformedSuggestion = suggestions.map((item) => ({
+      ...item,
+      name: item.name.replace(/\s/g, ''),
+    }));
+
+    const allSugestions = [...mentionSuggestions, trasformedSuggestion];
+    const allUniqueSuggestionMaded = unique(allSugestions);
+    setMentionSuggestions(trasformedSuggestion);
+    setAllUniqueSuggestions(allUniqueSuggestionMaded);
+  }, [mentionSuggestions, setMentionSuggestions, allUniqueSuggestions, setAllUniqueSuggestions]);
+
+  const users = [
+    {
+      id: 1, name: 'Raza Dar', display: 'mrazadar', gender: 'male',
+    },
+    {
+      id: 3, name: 'Atif Rashid', display: 'atif.rashid', gender: 'male',
+    },
+    {
+      id: 4, name: 'Peter Pan', display: 'peter.pan', gender: 'male',
+    },
+    {
+      id: 5, name: 'John Doe', display: 'john.doe', gender: 'male',
+    },
+    {
+      id: 6, name: 'Meesha Shafi', display: 'meesha.shafi', gender: 'female',
+    },
+  ];
+
   return (
     <Container>
       <Header transparent>
@@ -116,14 +156,19 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
       <ContentStyled>
         <TitleStyled>Comment</TitleStyled>
         <ItemContainer error={error}>
-          <InputStyled
-            placeholder="Type here"
-            defaultValue={value}
-            onChangeText={onChangeTextHandler}
-            error={error}
-            scrollEnabled={false}
-            multiline
+
+          <MentionInput
+            reference={(comp) => {}}
+            placeholder="Post something of worth"
+            mentionData={mentionSuggestions}
+            onChangeText={() => {}}
+            mentioningChangeText={onMentionChangeText}
+            renderMentionCell={({ item }) => {
+              console.log(item);
+              return <Text>{item.name}</Text>;
+            }}
           />
+
           {error && <Icon name="close-circle" />}
         </ItemContainer>
       </ContentStyled>

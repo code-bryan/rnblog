@@ -11,6 +11,7 @@ import PostList from '../../components/organisms/PostList';
 import HeaderMenuButton from '../../components/molecules/header/HeaderMenuButton';
 import SearchHeader from '../../components/organisms/SearchHeader';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
+import { NavigationEvents } from "react-navigation";
 
 type Params = {};
 type ScreenProps = {};
@@ -50,6 +51,7 @@ const FeedsScreen: NavigationStackScreenComponent<Params, ScreenProps> = (props)
   return (
     <Container>
       <Header transparent />
+      <NavigationEvents onDidFocus={onRefresh} />
       <View style={{ flex: 1 }}>
         <SearchHeader items={posts} onSearch={onSearchHandler}>Discover News</SearchHeader>
 

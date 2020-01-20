@@ -16,6 +16,7 @@ import Post from '../../models/Post';
 import { ActionReducer } from '../../types/ActionReducer';
 import ToastService from '../../services/ToastService';
 import { editDraft, publishDraft, saveDraft } from '../../store/modules/Drafts';
+import { getAllPosts } from "../../store/modules/Posts";
 
 interface ReducerValue {
   form: Post,
@@ -90,6 +91,7 @@ const ManageDraftScreen: NavigationStackScreenComponent = (props) => {
 
     if (valid) {
       dispatch((editMode) ? editDraft(form) : saveDraft(form));
+      dispatch(getAllPosts());
       navigation.goBack();
     } else {
       ToastService.closeLabelToast('Form invalid you must add the title, image url and category');

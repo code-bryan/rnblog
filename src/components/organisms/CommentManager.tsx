@@ -50,7 +50,7 @@ const CommentManager: React.FC<Props> = (props) => {
 
   return (
     <Container>
-      <CenteredButton bordered onPress={onAddComment} disabled={commentAvailable}>
+      <CenteredButton bordered onPress={onAddComment} disabled={!commentAvailable}>
         <Text>Add comment</Text>
       </CenteredButton>
 
