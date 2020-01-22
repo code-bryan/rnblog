@@ -1,20 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationStackScreenComponent, NavigationStackScreenProps } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Button,
-  Container,
-  Content,
-  Header,
-  Icon, Input,
-  Item as ItemContainer,
-  NativeBase,
-  Right,
-  Text,
+  Button, Container, Header, Icon, NativeBase, Right, View,
 } from 'native-base';
 import styled from 'styled-components/native';
 import moment from 'moment';
-import MentionInput from 'react-native-mention';
+import MentionsTextInput from 'react-native-mentions';
 import Title from '../../components/atoms/text/Title';
 import ToastService from '../../services/ToastService';
 import { updatePost } from '../../store/modules/Posts';
@@ -22,12 +14,15 @@ import Post from '../../models/Post';
 import User from '../../models/User';
 import Comment from '../../models/Comment';
 import DateFormats from '../../constants/DateFormats';
+import { getUsers } from '../../store/modules/App';
+import UserMention from '../../models/UserMention';
+import MentionUserItem from '../../components/molecules/MentionUserItem';
 
-interface PropsInput extends NativeBase.Input {
-  error: boolean,
+interface ViewProps extends NativeBase.View {
+  error: boolean
 }
 
-const ContentStyled = styled(Content)`
+const ContentStyled: React.FC<NativeBase.View> = styled(View)`
   margin-right: 20px;
   margin-left: 20px;
 `;
@@ -37,35 +32,42 @@ const TitleStyled = styled(Title)`
   margin-bottom: 10px;
 `;
 
-const InputStyled: React.FC<PropsInput> = styled(Input)`
-  width: ${(props: PropsInput) => (props.error ? '93%' : '100%')};
+const Content = styled(View)`
+  flex: 1;
+  margin-bottom: 10px;
+`;
+
+const InputContainer: React.FC<ViewProps> = styled(View)`
+  width: 100%;
+  flex-direction: row;
   margin-top: 20px;
-  padding-bottom: 10px;
+  border-bottom-color: ${(props: ViewProps) => (props.error ? '#e74c3c' : '#ccc')};
+  border-bottom-width: 2px;
 `;
 
 const StyledIcon: React.FC<NativeBase.Icon> = styled(Icon)`
   color: #000;
 `;
 
-const unique = (array: any[]) => [...new Set(array.map((s) => JSON.stringify(s)))].map((s) => JSON.parse(s));
+const IconError: React.FC<NativeBase.Icon> = styled(Icon)`
+  color: #e74c3c;
+`;
 
 const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScreenProps) => {
   const { navigation } = props;
   const comment: Comment = navigation.getParam('comment');
+
+  const user: User = useSelector((state: any) => state.auth.user);
+  const selectedPost: Post = useSelector((state: any) => state.posts.post);
+  const users: UserMention[] = useSelector((state: any) => state.app.users);
+
   const [editMode] = useState(!!comment);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(comment ? comment.body : '');
-  const user: User = useSelector((state: any) => state.auth.user);
-  const selectedPost: Post = useSelector((state: any) => state.posts.post);
   const dispatch = useDispatch();
 
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
-  const [allUniqueSuggestions, setAllUniqueSuggestions] = useState([]);
-
-  const onChangeTextHandler = useCallback((text: string) => {
-    setValue(text);
-    setError(text.length <= 0);
-  }, [setValue, setError]);
+  const [keyword, setKeyword] = useState('');
 
   const newCommentHandler = useCallback((newComment: Comment) => {
     if (editMode) {
@@ -111,38 +113,34 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
     }
   }, [error, value, setError]);
 
+  const onChangeTextHandler = useCallback((text: string) => {
+    setValue(text);
+    setError(text.length <= 0);
+  }, [setValue, setError]);
+
   const onMentionChangeText = useCallback((text: string) => {
-    const data = users;
-    const suggestions = data.filter((user) => user.name.toLocaleUpperCase().includes(text.toLocaleUpperCase()));
+    const suggestion = users.filter(
+      (item) => item.name.toLocaleUpperCase().includes(
+        text.replace('@', '').toLocaleUpperCase(),
+      ),
+    );
 
-    const trasformedSuggestion = suggestions.map((item) => ({
-      ...item,
-      name: item.name.replace(/\s/g, ''),
-    }));
+    // @ts-ignore
+    setMentionSuggestions(suggestion);
+    setKeyword(text);
+  }, [setMentionSuggestions, setKeyword]);
 
-    const allSugestions = [...mentionSuggestions, trasformedSuggestion];
-    const allUniqueSuggestionMaded = unique(allSugestions);
-    setMentionSuggestions(trasformedSuggestion);
-    setAllUniqueSuggestions(allUniqueSuggestionMaded);
-  }, [mentionSuggestions, setMentionSuggestions, allUniqueSuggestions, setAllUniqueSuggestions]);
+  const onUserTapText = useCallback((username: string) => {
+    setValue((currentValue) => {
+      const newValue = currentValue.slice(0, -keyword.length);
 
-  const users = [
-    {
-      id: 1, name: 'Raza Dar', display: 'mrazadar', gender: 'male',
-    },
-    {
-      id: 3, name: 'Atif Rashid', display: 'atif.rashid', gender: 'male',
-    },
-    {
-      id: 4, name: 'Peter Pan', display: 'peter.pan', gender: 'male',
-    },
-    {
-      id: 5, name: 'John Doe', display: 'john.doe', gender: 'male',
-    },
-    {
-      id: 6, name: 'Meesha Shafi', display: 'meesha.shafi', gender: 'female',
-    },
-  ];
+      return `${newValue} @${username}`;
+    });
+  }, [setValue, keyword]);
+
+  useEffect(() => {
+    dispatch(getUsers());
+  }, [dispatch]);
 
   return (
     <Container>
@@ -155,22 +153,38 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
       </Header>
       <ContentStyled>
         <TitleStyled>Comment</TitleStyled>
-        <ItemContainer error={error}>
+        <InputContainer error={error}>
 
-          <MentionInput
-            reference={(comp) => {}}
-            placeholder="Post something of worth"
-            mentionData={mentionSuggestions}
-            onChangeText={() => {}}
-            mentioningChangeText={onMentionChangeText}
-            renderMentionCell={({ item }) => {
-              console.log(item);
-              return <Text>{item.name}</Text>;
-            }}
-          />
+          <Content>
+            <MentionsTextInput
+              textInputStyle={{ fontSize: 16 }}
+              trigger="@"
+              value={value}
+              triggerLocation="new-word-only"
+              horizontal
+              textInputMinHeight={30}
+              textInputMaxHeight={80}
+              MaxVisibleRowCount={3}
+              suggestionRowHeight={45}
+              keyExtractor={(item: any) => item.id}
+              suggestionsData={mentionSuggestions}
+              triggerCallback={onMentionChangeText}
+              onChangeText={onChangeTextHandler}
+              suggestionsPanelStyle={{ backgroundColor: '#fff' }}
+              renderSuggestionsRow={(data: any, hidePanel: Function) => (
+                <MentionUserItem
+                  user={data.item}
+                  onUserTap={(username: string) => {
+                    hidePanel();
+                    onUserTapText(username);
+                  }}
+                />
+              )}
+            />
+          </Content>
 
-          {error && <Icon name="close-circle" />}
-        </ItemContainer>
+          {error && <IconError name="close-circle" />}
+        </InputContainer>
       </ContentStyled>
     </Container>
   );
