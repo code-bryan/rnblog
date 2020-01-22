@@ -7,6 +7,7 @@ import {
 import styled from 'styled-components/native';
 import moment from 'moment';
 import MentionsTextInput from 'react-native-mentions';
+import { ActivityIndicator, FlatList } from 'react-native';
 import Title from '../../components/atoms/text/Title';
 import ToastService from '../../services/ToastService';
 import { updatePost } from '../../store/modules/Posts';
@@ -17,22 +18,21 @@ import DateFormats from '../../constants/DateFormats';
 import { getUsers } from '../../store/modules/App';
 import UserMention from '../../models/UserMention';
 import MentionUserItem from '../../components/molecules/MentionUserItem';
+import CommentView from '../../components/molecules/comments/CommentView';
 
 interface ViewProps extends NativeBase.View {
   error: boolean
 }
 
 const ContentStyled: React.FC<NativeBase.View> = styled(View)`
-  margin-right: 20px;
-  margin-left: 20px;
+  height: 50%;
 `;
 
 const TitleStyled = styled(Title)`
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 20px;
 `;
 
-const Content = styled(View)`
+const ContentView = styled(View)`
   flex: 1;
   margin-bottom: 10px;
 `;
@@ -41,8 +41,9 @@ const InputContainer: React.FC<ViewProps> = styled(View)`
   width: 100%;
   flex-direction: row;
   margin-top: 20px;
-  border-bottom-color: ${(props: ViewProps) => (props.error ? '#e74c3c' : '#ccc')};
-  border-bottom-width: 2px;
+  padding: 10px 20px 0 20px;
+  border-color: ${(props: ViewProps) => (props.error ? '#e74c3c' : '#ccc')};
+  border-width: 0.6px;
 `;
 
 const StyledIcon: React.FC<NativeBase.Icon> = styled(Icon)`
@@ -64,6 +65,9 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
   const [editMode] = useState(!!comment);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(comment ? comment.body : '');
+  const [comments] = useState(
+    comment ? selectedPost.comments.filter((data) => data !== comment) : selectedPost.comments,
+  );
   const dispatch = useDispatch();
 
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
@@ -80,7 +84,6 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
     ];
 
     dispatch(updatePost(selectedPost));
-    navigation.goBack();
   }, [dispatch, user, value, selectedPost, editMode]);
 
   const editCommentHandler = useCallback((newComment: Comment) => {
@@ -93,14 +96,15 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
     selectedPost.comments = [...filterComments, newComment];
 
     dispatch(updatePost(selectedPost));
-    navigation.goBack();
   }, [dispatch, user, value, selectedPost, comment, editMode]);
 
   const onSubmitHandler = useCallback(() => {
-    setError(value.length <= 0);
+    const errorOnSubmit = value.length <= 0;
+    setError(errorOnSubmit);
 
-    if (!error) {
+    if (!errorOnSubmit) {
       const newComment: Comment = {
+        id: !editMode ? selectedPost.comments.length : comment.id,
         author: user,
         body: value,
         publishDate: moment().format(DateFormats.database),
@@ -108,10 +112,11 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
 
       editCommentHandler(newComment);
       newCommentHandler(newComment);
+      navigation.goBack();
     } else {
-      ToastService.closeLabelToast('Error');
+      ToastService.closeLabelToast('The comment box is empty, please write a comment');
     }
-  }, [error, value, setError]);
+  }, [value, setError]);
 
   const onChangeTextHandler = useCallback((text: string) => {
     setValue(text);
@@ -153,15 +158,27 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
       </Header>
       <ContentStyled>
         <TitleStyled>Comment</TitleStyled>
+        <FlatList
+          data={comments}
+          renderItem={(data) => (
+            <CommentView
+              comment={data.item}
+            />
+          )}
+        />
+
         <InputContainer error={error}>
 
-          <Content>
+          <ContentView>
             <MentionsTextInput
               textInputStyle={{ fontSize: 16 }}
               trigger="@"
               value={value}
               triggerLocation="new-word-only"
               horizontal
+              autoFocus
+              multiline={false}
+              placeholder="Add a comment..."
               textInputMinHeight={30}
               textInputMaxHeight={80}
               MaxVisibleRowCount={3}
@@ -171,6 +188,7 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
               triggerCallback={onMentionChangeText}
               onChangeText={onChangeTextHandler}
               suggestionsPanelStyle={{ backgroundColor: '#fff' }}
+              loadingComponent={() => <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator /></View>}
               renderSuggestionsRow={(data: any, hidePanel: Function) => (
                 <MentionUserItem
                   user={data.item}
@@ -181,7 +199,7 @@ const CommentScreen: NavigationStackScreenComponent = (props: NavigationStackScr
                 />
               )}
             />
-          </Content>
+          </ContentView>
 
           {error && <IconError name="close-circle" />}
         </InputContainer>

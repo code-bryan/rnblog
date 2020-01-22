@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import React, { useCallback } from 'react';
-import { Text, View } from 'native-base';
+import { Text } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import PostUserInfo from '../PostUserInfo';
 import Comment from '../../../models/Comment';
@@ -14,8 +14,11 @@ interface Props {
 
 const CommentContainer = styled(TouchableOpacity)`
   padding-bottom: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
   border-color: #ccc;
-  border-bottom-width: 1px;
+  border-bottom-width: 0.6px;
+  align-items: flex-start;
 `;
 
 const TextStyled = styled(Text)`
@@ -30,15 +33,21 @@ const CommentView: React.FC<Props> = (props) => {
   } = props;
 
   const onUserTabHandler = useCallback(() => {
-    onUserTab(comment.author);
+    if (onUserTab) {
+      onUserTab(comment.author);
+    }
   }, [comment, onUserTab]);
 
   const onPressHandler = useCallback(() => {
-    onEdit(comment);
+    if (onEdit) {
+      onEdit(comment);
+    }
   }, [comment, onEdit]);
 
   const onLongPressHandler = useCallback(() => {
-    onDelete(comment);
+    if (onDelete) {
+      onDelete(comment);
+    }
   }, [comment, onDelete]);
 
   return (

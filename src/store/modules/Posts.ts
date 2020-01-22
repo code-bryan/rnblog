@@ -104,6 +104,7 @@ export const updatePost = (post: Post) => async (dispatch: any) => {
 };
 
 export const postDetails = (post: Post) => async (dispatch: any) => {
+  post.comments = post.comments.sort((item, itemTwo) => item.id - itemTwo.id);
   dispatch({ type: POST_DETAILS, payload: post });
 };
 

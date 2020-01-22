@@ -4,6 +4,7 @@ import { RefreshControl } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { NavigationEvents } from 'react-navigation';
 import { getAllPosts, postDetails, setRefreshing } from '../../store/modules/Posts';
 import Post from '../../models/Post';
 import CategoryList from '../../components/organisms/CategoriesList';
@@ -11,7 +12,6 @@ import PostList from '../../components/organisms/PostList';
 import HeaderMenuButton from '../../components/molecules/header/HeaderMenuButton';
 import SearchHeader from '../../components/organisms/SearchHeader';
 import NoContentListMessage from '../../components/atoms/NoContentListMessage';
-import { NavigationEvents } from "react-navigation";
 
 type Params = {};
 type ScreenProps = {};

@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components/native';
 import {
   Button, NativeBase, Text, View,
 } from 'native-base';
+import { FlatList } from 'react-native';
 import CommentView from '../molecules/comments/CommentView';
 import Comment from '../../models/Comment';
 import User from '../../models/User';
@@ -18,6 +19,10 @@ interface Props {
 
 const Container = styled(View)`
   margin-bottom: 10px;
+`;
+
+const Content = styled(View)`
+  padding: 0 20px;
 `;
 
 const CenteredButton: React.FC<NativeBase.Button> = styled(Button)`
@@ -50,21 +55,25 @@ const CommentManager: React.FC<Props> = (props) => {
 
   return (
     <Container>
-      <CenteredButton bordered onPress={onAddComment} disabled={!commentAvailable}>
-        <Text>Add comment</Text>
-      </CenteredButton>
+      <Content>
+        <CenteredButton bordered onPress={onAddComment} disabled={!commentAvailable}>
+          <Text>Add comment</Text>
+        </CenteredButton>
+      </Content>
 
-      <Container>
-        {comments.map((comment, index) => (
-          <CommentView
-            key={`${index}${comment.author.username}`}
-            comment={comment}
-            onUserTab={onUserTabHandler}
-            onEdit={onEditHandler}
-            onDelete={onDeleteHandler}
-          />
-        ))}
-      </Container>
+      <View>
+        <FlatList
+          data={comments.sort((item, itemTwo) => item.id - itemTwo.id)}
+          renderItem={(data) => (
+            <CommentView
+              comment={data.item}
+              onUserTab={onUserTabHandler}
+              onEdit={onEditHandler}
+              onDelete={onDeleteHandler}
+            />
+          )}
+        />
+      </View>
     </Container>
   );
 };

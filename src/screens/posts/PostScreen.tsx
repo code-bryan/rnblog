@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Content, Header } from 'native-base';
+import { Container, Content, Header, View } from 'native-base';
 import { NavigationScreenComponent } from 'react-navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert, StyleSheet } from 'react-native';
@@ -86,17 +86,19 @@ const PostScreen: NavigationScreenComponent<any, any> = (props) => {
   return (
     <Container>
       <Header transparent />
-      <Content style={styles.content}>
-        <Title>{post.title}</Title>
-        <PostUserInfo
-          author={post.author}
-          publishDate={post.publishDate}
-          onUserTab={onUserTap}
-          arrow
-        />
-        <PostActions likes={post.likes} comments={post.comments} onLikePress={onLikeHandler} />
-        <ItemImage source={{ uri: post.image }} height={200} />
-        <EditorTextContainer body={post.body} />
+      <Content>
+        <View style={styles.content}>
+          <Title>{post.title}</Title>
+          <PostUserInfo
+            author={post.author}
+            publishDate={post.publishDate}
+            onUserTab={onUserTap}
+            arrow
+          />
+          <PostActions likes={post.likes} comments={post.comments} onLikePress={onLikeHandler} />
+          <ItemImage source={{ uri: post.image }} height={200} />
+          <EditorTextContainer body={post.body} />
+        </View>
         <CommentManager
           comments={post.comments}
           commentAvailable={post.commentsAvailable}

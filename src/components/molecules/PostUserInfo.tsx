@@ -19,7 +19,7 @@ interface Props {
 const AuthorName = styled.Text`
   font-size: 15px;
   font-weight: bold;
-  margin-left: 15px;
+  margin-left: 10px;
   margin-top: 3px;
 `;
 
@@ -61,7 +61,7 @@ const PostUserInfo: React.FC<Props> = (props) => {
     <PostUserInfoContainer activeOpacity={0.6} onPress={onUserTab}>
       <Container>
         { props.author.avatar.length > 0 && (
-          <CircleImage source={{ uri: author.avatar }} width={50} height={50} />
+          <CircleImage source={{ uri: author.avatar }} width={40} height={40} />
         ) }
         <View>
           <AuthorName>{`${author.name} ${author.lastname}`}</AuthorName>

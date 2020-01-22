@@ -1,4 +1,4 @@
-export class UserMention {
+class UserMention {
   id: string = '';
 
   name: string = '';
