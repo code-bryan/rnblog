@@ -1,4 +1,5 @@
-import firebase, { User as FirebaseUser } from 'firebase';
+
+import firebase from 'react-native-firebase';
 import Credentials from '../models/Credentials';
 import User from '../models/User';
 import BasicRegistration from '../models/BasicRegistration';
@@ -30,7 +31,7 @@ class AuthenticationService {
       .createUserWithEmailAndPassword(basicRegistration.email, basicRegistration.password);
 
     const user = await User
-      .fromAuthUser(createdAuthUser.user as FirebaseUser, basicRegistration.password);
+      .fromAuthUser(createdAuthUser.user, basicRegistration.password);
 
     return user;
   }

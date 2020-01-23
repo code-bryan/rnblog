@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'react-native-firebase';
 import moment from 'moment';
 import Post from '../models/Post';
 import DateFormats from '../constants/DateFormats';

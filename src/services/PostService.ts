@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'react-native-firebase';
 import Post from '../models/Post';
 
 class PostService {

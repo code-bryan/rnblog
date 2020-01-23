@@ -133,6 +133,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -184,6 +185,15 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
 
+    implementation "com.google.android.gms:play-services-base:17.0.0"
+    implementation "com.google.firebase:firebase-core:17.0.1"
+    implementation "com.google.firebase:firebase-messaging:19.0.0"
+    implementation "com.google.firebase:firebase-firestore:19.0.0"
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+
+    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
@@ -202,4 +212,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
-
+apply plugin: 'com.google.gms.google-services'

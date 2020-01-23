@@ -1,4 +1,3 @@
-import { User as FirebaseUser } from 'firebase';
 import md5 from 'md5';
 import BasicRegistration from './BasicRegistration';
 
@@ -23,7 +22,7 @@ class User {
 
   privacy: boolean = false;
 
-  static async fromAuthUser(firebaseUser: FirebaseUser, password: string): Promise<User> {
+  static async fromAuthUser(firebaseUser: any, password: string): Promise<User> {
     const user = new User();
 
     user.uid = firebaseUser.uid;

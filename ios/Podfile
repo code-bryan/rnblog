@@ -36,6 +36,10 @@ target 'rnblog' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'Firebase/Messaging', '~> 6.13.0'
+  pod 'Firebase/Firestore', '~> 6.13.0'
+  pod 'Firebase/Auth', '~> 6.13.0'
+
   target 'rnblogTests' do
     inherit! :search_paths
     # Pods for testing

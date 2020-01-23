@@ -78,7 +78,9 @@ const DraftScreen: NavigationStackScreenComponent = (props) => {
         dispatch(cleanDraftError());
       });
     }
-  }, [error, dispatch]);
+
+    onRefresh();
+  }, [error, dispatch, onRefresh]);
 
   return (
     <Container>
