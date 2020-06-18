@@ -34,7 +34,11 @@ target 'rnblog' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  pod 'Firebase/Messaging', '~> 6.13.0'
+  pod 'Firebase/Firestore', '~> 6.13.0'
+  pod 'Firebase/Auth', '~> 6.13.0'
 
   target 'rnblogTests' do
     inherit! :search_paths

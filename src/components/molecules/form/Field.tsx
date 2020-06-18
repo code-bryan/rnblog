@@ -1,27 +1,26 @@
-import styled from 'styled-components';
 import React, { useCallback, useEffect, useReducer } from 'react';
-import { Platform, View } from 'react-native';
-import TextAlert from './TextAlert';
-import Colors from '../../constants/Colors';
+import {
+  Icon,
+  Input, Item, Label, NativeBase, View,
+} from 'native-base';
 
 const INPUT_TOUCHED = 'INPUT_TOUCHED';
 const VALUE_CHANGE = 'VALUE_CHANGE';
 
-type Props = {
+interface Props extends NativeBase.Input{
   id: string,
   label: string;
-  defaultValue?: string | null;
   valid?: boolean;
   required?: boolean;
   email?: boolean;
   min?: number;
   max?: number;
+  rounded?: boolean;
+  last?: boolean;
   minLength?: number;
-  type: string;
-  keyboardType?: string;
-  autoCapitalize?: string;
-  onChange: Function
-};
+  onInputChange?: Function;
+  dismissLabel?: boolean;
+}
 
 interface InputReducerValues {
   value: string;
@@ -47,30 +46,20 @@ const InputReducer = (state: InputReducerValues, action: any) => {
   }
 };
 
-const FieldLabel = styled.Text`
-   font-size: 20px;
-   font-weight: 200;
-`;
-
-const FieldContainer = styled.View`
-  margin: ${Platform.OS === 'ios' ? '0 15px' : '10px 15px'};
-  padding: ${Platform.OS === 'ios' ? '15px 5px' : '0'};
-  border-bottom-width: ${Platform.OS === 'ios' ? '0.5px' : '0.8px'};
-  border-bottom-color: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const FieldTextInput = styled.TextInput`
-  width: 100%;
-  font-size: 20px;
-  margin-top: ${Platform.OS === 'ios' ? '10px' : '0'};
-`;
-
-const FormField: React.FC<Props> = (props: Props) => {
+const Field: React.FC<Props> = (props: Props) => {
   const {
-    id, label, type, keyboardType, onChange, defaultValue, valid, autoCapitalize,
+    id,
+    label,
+    onInputChange,
+    defaultValue,
+    valid,
+    autoCapitalize,
+    secureTextEntry,
+    rounded,
+    numberOfLines,
+    last,
+    dismissLabel,
+    disabled,
   } = props;
 
   const inputReducerValues: InputReducerValues = {
@@ -84,12 +73,6 @@ const FormField: React.FC<Props> = (props: Props) => {
   const onTouchedInput = useCallback(() => {
     dispatch({ type: INPUT_TOUCHED });
   }, [dispatch]);
-
-  useEffect(() => {
-    if (state.touched) {
-      onChange(id, state.value, state.isValid);
-    }
-  }, [state, onChange]);
 
   const onInputTextChange = useCallback((text: string) => {
     // eslint-disable-next-line no-useless-escape
@@ -124,25 +107,39 @@ const FormField: React.FC<Props> = (props: Props) => {
     });
   }, [id, dispatch]);
 
+  useEffect(() => {
+    if (state.touched) {
+      onInputChange(id, state.value, state.isValid);
+    }
+  }, [state]);
+
   return (
-    <FieldContainer>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <FieldLabel>{label}</FieldLabel>
-        {!state.isValid && state.touched && (
-          <TextAlert>This input is not valid</TextAlert>
+    <View style={{ marginBottom: !last ? 20 : 0 }}>
+      <Item rounded={rounded} error={!state.isValid && state.touched} style={{ paddingLeft: rounded ? 15 : 0 }}>
+        {dismissLabel && (
+          <Label style={{ paddingLeft: 5 }}>
+            {label}
+:
+          </Label>
         )}
-      </View>
-      <FieldTextInput
-        autoCapitalize={autoCapitalize}
-        secureTextEntry={type === 'password'}
-        textContentType={type}
-        keyboardType={keyboardType}
-        value={state.value}
-        onBlur={onTouchedInput}
-        onChangeText={onInputTextChange}
-      />
-    </FieldContainer>
+        <Input
+          placeholder={!dismissLabel ? label : ''}
+          autoCapitalize={autoCapitalize}
+          secureTextEntry={secureTextEntry}
+          value={state.value}
+          onBlur={onTouchedInput}
+          onChangeText={onInputTextChange}
+          numberOfLines={numberOfLines}
+          style={{ textAlign: dismissLabel ? 'right' : 'left' }}
+          disabled={disabled}
+        />
+
+        {(!state.isValid && state.touched) && (
+          <Icon name="close-circle" />
+        )}
+      </Item>
+    </View>
   );
 };
 
-export default FormField;
+export default Field;
