@@ -16,7 +16,7 @@
     "@types/react-redux": "^7.1.5",
     "axios": "^0.19.1",
     "md5": "^2.2.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-native": "0.61.5",
